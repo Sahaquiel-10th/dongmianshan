@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1920, initial-scale=1.0">
+    <title>东面山 - 东方熟龄肌男士护肤开创者</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'NotoSerifCJKsc';
+            src: url('https://assets-persist.lovart.ai/agent-static-assets/NotoSerifCJKsc-Regular.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'NotoSerifCJKsc';
+            src: url('https://assets-persist.lovart.ai/agent-static-assets/NotoSerifCJKsc-Bold.otf') format('opentype');
+            font-weight: bold;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'AlibabaSans';
+            src: url('https://assets-persist.lovart.ai/agent-static-assets/AlibabaSans-Regular.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --primary-blue: #003B5C;
+            --accent-orange: #FF6A39;
+            --text-dark: #1A202C;
+            --text-light: #F8FAFC;
+            --bg-light: #F8FAFC;
+            --bg-white: #FFFFFF;
+            --border-light: #E2E8F0;
+            --font-serif: 'NotoSerifCJKsc', serif;
+            --font-sans: 'AlibabaSans', sans-serif;
+            --content-width: 1440px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            color: var(--text-dark);
+            background-color: var(--bg-white);
+            width: 1920px;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            width: var(--content-width);
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 1080px;
+            position: relative;
+            background-image: url('https://a.lovart.ai/artifacts/agent/P9q2bBwjTK11wDjP.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--text-light);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(0, 59, 92, 0.4), rgba(0, 59, 92, 0.8));
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+        }
+
+        .hero-title {
+            font-family: var(--font-serif);
+            font-size: 88px;
+            font-weight: bold;
+            letter-spacing: 8px;
+            margin-bottom: 24px;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 32px;
+            color: var(--accent-orange);
+            font-weight: bold;
+            letter-spacing: 4px;
+            margin-bottom: 40px;
+        }
+
+        .hero-quote {
+            font-size: 24px;
+            font-family: var(--font-serif);
+            opacity: 0.9;
+            margin-bottom: 60px;
+            letter-spacing: 2px;
+        }
+
+        .hero-tags {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .hero-tag {
+            background-color: var(--accent-orange);
+            color: white;
+            padding: 12px 32px;
+            border-radius: 4px;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            box-shadow: 0 4px 12px rgba(255, 106, 57, 0.3);
+        }
+
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+        }
+
+        .btn {
+            padding: 16px 48px;
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-orange);
+            color: white;
+            border: none;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: white;
+            border: 2px solid var(--primary-blue);
+            background-color: rgba(0, 59, 92, 0.5);
+        }
+
+        /* Section Global */
+        .section {
+            padding: 120px 0;
+            position: relative;
+        }
+
+        .section-light {
+            background-color: var(--bg-light);
+        }
+
+        .section-title {
+            font-family: var(--font-serif);
+            font-size: 48px;
+            color: var(--primary-blue);
+            text-align: center;
+            margin-bottom: 80px;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background-color: var(--accent-orange);
+        }
+
+        /* Values Section */
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+        }
+
+        .value-card {
+            background: white;
+            padding: 60px 40px;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.4s ease;
+            border: 2px solid transparent;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .value-card:hover {
+            border-color: var(--accent-orange);
+            transform: translateY(-10px);
+        }
+
+        .value-icon {
+            font-size: 64px;
+            color: var(--primary-blue);
+            margin-bottom: 24px;
+        }
+
+        .value-title {
+            font-family: var(--font-serif);
+            font-size: 28px;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .value-desc {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        /* Story Section */
+        .story-container {
+            display: flex;
+            align-items: center;
+            gap: 80px;
+        }
+
+        .story-image {
+            flex: 1;
+            height: 600px;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .story-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .story-content {
+            flex: 1;
+        }
+
+        .story-quote {
+            font-family: var(--font-serif);
+            font-size: 24px;
+            color: var(--primary-blue);
+            line-height: 2;
+            margin-bottom: 40px;
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .story-quote::before {
+            content: '"';
+            font-size: 80px;
+            color: var(--accent-orange);
+            position: absolute;
+            left: -10px;
+            top: -20px;
+            opacity: 0.3;
+            font-family: serif;
+        }
+
+        .story-text {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #4A5568;
+            margin-bottom: 30px;
+        }
+
+        /* Ingredients Section */
+        .ingredients-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .ingredient-card {
+            background: white;
+            border-radius: 8px;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            border-left: 4px solid var(--accent-orange);
+        }
+
+        .ingredient-icon {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(0, 59, 92, 0.05);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: var(--primary-blue);
+        }
+
+        .ingredient-info {
+            flex: 1;
+        }
+
+        .ingredient-name {
+            font-family: var(--font-serif);
+            font-size: 22px;
+            color: var(--primary-blue);
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .ingredient-effect {
+            color: var(--accent-orange);
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* Products Section */
+        .products-workflow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .products-workflow::before {
+            content: '';
+            position: absolute;
+            top: 40%;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: dashed 2px var(--border-light);
+            z-index: 0;
+        }
+
+        .product-step {
+            position: relative;
+            z-index: 1;
+            width: 30%;
+            text-align: center;
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            background-color: var(--primary-blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 0 auto 24px;
+            border: 4px solid white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 360px;
+            background-color: #F8FAFC;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            overflow: hidden;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .product-title {
+            font-family: var(--font-serif);
+            font-size: 24px;
+            color: var(--primary-blue);
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .product-desc {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .product-target {
+            display: inline-block;
+            background-color: rgba(255, 106, 57, 0.1);
+            color: var(--accent-orange);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* Problems Section */
+        .problems-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .problem-card {
+            flex: 1;
+            background: white;
+            padding: 40px 24px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .problem-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: var(--primary-blue);
+            transition: background-color 0.3s ease;
+        }
+
+        .problem-card:hover::before {
+            background-color: var(--accent-orange);
+        }
+
+        .problem-icon {
+            font-size: 40px;
+            color: var(--accent-orange);
+            margin-bottom: 20px;
+        }
+
+        .problem-title {
+            font-family: var(--font-serif);
+            font-size: 20px;
+            color: var(--primary-blue);
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+
+        .problem-solution {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Trust Section */
+        .trust-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+        }
+
+        .trust-item {
+            text-align: center;
+            padding: 30px;
+            background: #F8FAFC;
+            border-radius: 8px;
+        }
+
+        .trust-icon {
+            font-size: 48px;
+            color: var(--accent-orange);
+            margin-bottom: 16px;
+        }
+
+        .trust-title {
+            font-size: 18px;
+            color: var(--primary-blue);
+            font-weight: bold;
+        }
+
+        /* Closing Section */
+        .closing {
+            height: 1080px;
+            background-image: url('https://a.lovart.ai/artifacts/agent/F4Jm9qg0n01WCPjL.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .closing::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to top, rgba(0, 59, 92, 0.9), rgba(0, 59, 92, 0.6));
+        }
+
+        .closing-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1000px;
+        }
+
+        .closing-text {
+            font-family: var(--font-serif);
+            font-size: 48px;
+            color: white;
+            line-height: 1.8;
+            font-weight: bold;
+            letter-spacing: 4px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .closing-text span {
+            color: var(--accent-orange);
+            display: block;
+            margin-top: 20px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">东面山，向阳而生</h1>
+            <h2 class="hero-subtitle">东方熟龄肌男士护肤开创者</h2>
+            <p class="hero-quote">你是他们的东面山，我愿做你的东面山</p>
+            <div class="hero-tags">
+                <span class="hero-tag">8项专利成分</span>
+                <span class="hero-tag">多效抗初老</span>
+                <span class="hero-tag">精简三步护肤</span>
+            </div>
+            <div class="hero-buttons">
+                <button class="btn btn-primary">了解品牌</button>
+                <button class="btn btn-outline">查看产品</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Values Section -->
+    <section class="section section-light">
+        <div class="container">
+            <h2 class="section-title">三重守护</h2>
+            <div class="values-grid">
+                <div class="value-card">
+                    <i class="ri-shield-check-line value-icon"></i>
+                    <h3 class="value-title">肌肤守护</h3>
+                    <p class="value-desc">专研熟龄肌肤问题，提供科学、精准、高效的护肤方案，抵御岁月痕迹。</p>
+                </div>
+                <div class="value-card">
+                    <i class="ri-mind-map value-icon"></i>
+                    <h3 class="value-title">精神守护</h3>
+                    <p class="value-desc">在繁忙与压力中，重拾自信与体面，焕发内在的坚韧力量。</p>
+                </div>
+                <div class="value-card">
+                    <i class="ri-vip-crown-line value-icon"></i>
+                    <h3 class="value-title">身份守护</h3>
+                    <p class="value-desc">成熟男性的品质选择，彰显从容不迫、向阳而生的人生态度。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Story Section -->
+    <section class="section">
+        <div class="container">
+            <div class="story-container">
+                <div class="story-image">
+                    <img src="https://a.lovart.ai/artifacts/agent/R50exQYlP7DxoxPP.jpg" alt="成熟男性形象">
+                </div>
+                <div class="story-content">
+                    <div class="story-quote">
+                        40岁生日那天，镜中的自己让我停下脚步。<br>
+                        发现熟龄男士护肤市场的空白，<br>
+                        东面山，因此诞生。
+                    </div>
+                    <p class="story-text">东方男性的皮肤结构与衰老轨迹有着独特的规律。我们深知，成熟不仅是阅历的沉淀，更应是状态的从容。东面山专注于东方熟龄肌的深层需求，不仅解决表面的岁月痕迹，更致力于构建肌肤内在的强韧屏障。</p>
+                    <p class="story-text">为什么是东面山？因为我们懂你背负的责任，懂你对品质的苛求。专为东方熟龄肌男士研发，融合尖端科技与自然精粹，只为那份不可替代的沉稳与自信。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ingredients Section -->
+    <section class="section section-light">
+        <div class="container">
+            <h2 class="section-title">8项专利成分矩阵</h2>
+            <div class="ingredients-grid">
+                <div class="ingredient-card">
+                    <div class="ingredient-icon"><i class="ri-test-tube-line"></i></div>
+                    <div class="ingredient-info">
+                        <div class="ingredient-name">玻色因</div>
+                        <div class="ingredient-effect">深层抗老 紧致轮廓</div>
+                    </div>
+                </div>
+                <div class="ingredient-card">
+                    <div class="ingredient-icon"><i class="ri-drop-line"></i></div>
+                    <div class="ingredient-info">
+                        <div class="ingredient-name">可溶性胶原</div>
+                        <div class="ingredient-effect">充盈弹润 抚平细纹</div>
+                    </div>
+                </div>
+                <div class="ingredient-card">
+                    <div class="ingredient-icon"><i class="ri-sparkling-line"></i></div>
+                    <div class="ingredient-info">
+                        <div class="ingredient-name">烟酰胺</div>
+                        <div class="ingredient-effect">提亮肤色 改善暗沉</div>
+                    </div>
+                </div>
+                <div class="ingredient-card">
+                    <div class="ingredient-icon"><i class="ri-leaf-line"></i></div>
+                    <div class="ingredient-info">
+                        <div class="ingredient-name">α-熊果苷</div>
+                        <div class="ingredient-effect">均匀透亮 焕发光采</div>
+                    </div>
+                </div>
+                <div class="ingredient-card">
+                    <div class="ingredient-icon"><i class="ri-dossier-line"></i></div>
+                    <div class="ingredient-info">
+                        <div class="ingredient-name">十肽-4</div>
+                        <div class="ingredient-effect">强效修护 焕活肌底</div>
+                    </div>
+                </div>
+                <div class="ingredient-card">
+                    <div class="ingredient-icon"><i class="ri-plant-line"></i></div>
+                    <div class="ingredient-info">
+                        <div class="ingredient-name">铁皮石斛</div>
+                        <div class="ingredient-effect">东方植萃 深层滋养</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">精简三步护肤方案</h2>
+            <div class="products-workflow">
+                <div class="product-step">
+                    <div class="step-number">1</div>
+                    <div class="product-image">
+                        <img src="https://a.lovart.ai/artifacts/agent/dw99lcW5oN2al8co.jpg" alt="洁面慕斯">
+                    </div>
+                    <h3 class="product-title">洁面慕斯</h3>
+                    <p class="product-desc">深层清洁，温和不紧绷，洗去疲惫，开启清爽护肤第一步。</p>
+                    <span class="product-target">净透毛孔 舒缓剃须</span>
+                </div>
+                <div class="product-step">
+                    <div class="step-number">2</div>
+                    <div class="product-image">
+                        <img src="https://a.lovart.ai/artifacts/agent/dw99lcW5oN2al8co.jpg" alt="精华水">
+                    </div>
+                    <h3 class="product-title">精华水</h3>
+                    <p class="product-desc">极速补水，密集修护，打开肌肤吸收通道，唤醒肌肤活力。</p>
+                    <span class="product-target">水油平衡 细致平滑</span>
+                </div>
+                <div class="product-step">
+                    <div class="step-number">3</div>
+                    <div class="product-image">
+                        <img src="https://a.lovart.ai/artifacts/agent/dw99lcW5oN2al8co.jpg" alt="精华乳">
+                    </div>
+                    <h3 class="product-title">精华乳</h3>
+                    <p class="product-desc">核心抗老，紧致锁水，全天候守护，重塑硬朗轮廓线。</p>
+                    <span class="product-target">抗老紧致 强韧屏障</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problems Section -->
+    <section class="section section-light">
+        <div class="container">
+            <h2 class="section-title">针对熟龄肌5大问题</h2>
+            <div class="problems-container">
+                <div class="problem-card">
+                    <i class="ri-moon-foggy-line problem-icon"></i>
+                    <h3 class="problem-title">暗沉无光</h3>
+                    <p class="problem-solution">烟酰胺+熊果苷<br>双效焕亮，扫除疲态</p>
+                </div>
+                <div class="problem-card">
+                    <i class="ri-water-flash-line problem-icon"></i>
+                    <h3 class="problem-title">岁月细纹</h3>
+                    <p class="problem-solution">高浓度玻色因<br>充盈胶原，淡化纹理</p>
+                </div>
+                <div class="problem-card">
+                    <i class="ri-shape-2-line problem-icon"></i>
+                    <h3 class="problem-title">轮廓松弛</h3>
+                    <p class="problem-solution">十肽-4协同胶原<br>提拉紧致，重塑线条</p>
+                </div>
+                <div class="problem-card">
+                    <i class="ri-shield-cross-line problem-icon"></i>
+                    <h3 class="problem-title">屏障脆弱</h3>
+                    <p class="problem-solution">专利精粹配方<br>强韧肌底，抵御外界</p>
+                </div>
+                <div class="problem-card">
+                    <i class="ri-knife-line problem-icon"></i>
+                    <h3 class="problem-title">剃须敏感</h3>
+                    <p class="problem-solution">温和舒缓成分<br>快速镇静，减少刺激</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Section -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">专业背书</h2>
+            <div class="trust-grid">
+                <div class="trust-item">
+                    <i class="ri-award-fill trust-icon"></i>
+                    <div class="trust-title">8项专利配方</div>
+                </div>
+                <div class="trust-item">
+                    <i class="ri-plane-fill trust-icon"></i>
+                    <div class="trust-title">全球精选原料</div>
+                </div>
+                <div class="trust-item">
+                    <i class="ri-file-shield-2-fill trust-icon"></i>
+                    <div class="trust-title">合规检测备案</div>
+                </div>
+                <div class="trust-item">
+                    <i class="ri-bar-chart-box-fill trust-icon"></i>
+                    <div class="trust-title">严谨功效验证</div>
+                </div>
+                <div class="trust-item">
+                    <i class="ri-team-fill trust-icon"></i>
+                    <div class="trust-title">顶尖研发团队</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Closing Section -->
+    <section class="closing">
+        <div class="closing-content">
+            <p class="closing-text">
+                你守护家庭、团队、生活<br>
+                <span>我们守护你的肌肤、体面与自信</span>
+            </p>
+        </div>
+    </section>
+
+</body>
+</html>
