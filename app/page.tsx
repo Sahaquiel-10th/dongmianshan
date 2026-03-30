@@ -59,7 +59,8 @@ const trustItems = [
   "顶尖研发团队",
 ];
 
-const productImage = "https://a.lovart.ai/artifacts/agent/dw99lcW5oN2al8co.jpg";
+const productImage =
+  "https://media-1383535556.cos.ap-shanghai.myqcloud.com/%E4%B8%9C%E9%9D%A2%E5%B1%B1.png";
 
 export default function Page() {
   return (
@@ -105,7 +106,7 @@ export default function Page() {
         <div className="container story-layout">
           <div className="story-image-frame">
             <img
-              src="https://a.lovart.ai/artifacts/agent/R50exQYlP7DxoxPP.jpg"
+              src="https://media-1383535556.cos.ap-shanghai.myqcloud.com/%E6%99%A8%E9%97%B4%E6%B4%97%E6%BC%B1%E9%95%9C%E4%B8%AD%E7%85%A7.png"
               alt="成熟男性形象"
             />
           </div>
