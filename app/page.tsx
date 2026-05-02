@@ -1,143 +1,123 @@
-const values = [
-  {
-    icon: "🛡",
-    title: "肌肤守护",
-    desc: "专研熟龄肌肤问题，提供科学、精准、高效的护肤方案，抵御岁月痕迹。",
-  },
-  {
-    icon: "⛰",
-    title: "精神守护",
-    desc: "在繁忙与压力中，重拾自信与体面，焕发内在的坚韧力量。",
-  },
-  {
-    icon: "👑",
-    title: "身份守护",
-    desc: "成熟男性的品质选择，彰显从容不迫、向阳而生的人生态度。",
-  },
-];
+import Link from "next/link";
+import {
+  navItems,
+  placeholderImages,
+  products,
+  scienceArticles,
+  testimonials,
+  topLinks,
+} from "@/lib/homepage";
 
-const ingredients = [
-  ["玻色因", "深层抗老 紧致轮廓", "🧪"],
-  ["可溶性胶原", "充盈弹润 抚平细纹", "💧"],
-  ["烟酰胺", "提亮肤色 改善暗沉", "✦"],
-  ["α-熊果苷", "均匀透亮 焕发光采", "🌿"],
-  ["十肽-4", "强效修护 焕活肌底", "📄"],
-  ["铁皮石斛", "东方植萃 深层滋养", "🍃"],
-];
-
-const products = [
-  {
-    title: "洁面慕斯",
-    desc: "深层清洁，温和不紧绷，洗去疲惫，开启清爽护肤第一步。",
-    target: "净透毛孔 舒缓剃须",
-  },
-  {
-    title: "精华水",
-    desc: "极速补水，密集修护，打开肌肤吸收通道，唤醒肌肤活力。",
-    target: "水油平衡 细致平滑",
-  },
-  {
-    title: "精华乳",
-    desc: "核心抗老，紧致锁水，全天候守护，重塑硬朗轮廓线。",
-    target: "抗老紧致 强韧屏障",
-  },
-];
-
-const problems = [
-  ["暗沉无光", "烟酰胺+熊果苷\n双效焕亮，扫除疲态", "🌙"],
-  ["岁月细纹", "高浓度玻色因\n充盈胶原，淡化纹理", "💦"],
-  ["轮廓松弛", "十肽-4协同胶原\n提拉紧致，重塑线条", "◇"],
-  ["屏障脆弱", "专利精粹配方\n强韧肌底，抵御外界", "🛟"],
-  ["剃须敏感", "温和舒缓成分\n快速镇静，减少刺激", "✂"],
-];
-
-const trustItems = [
-  "8项专利配方",
-  "全球精选原料",
-  "合规检测备案",
-  "严谨功效验证",
-  "顶尖研发团队",
-];
-
-const productImage =
-  "https://media-1383535556.cos.ap-shanghai.myqcloud.com/%E4%B8%9C%E9%9D%A2%E5%B1%B1.png";
+function SiteHeader() {
+  return (
+    <header className="site-header">
+      <div className="utility-bar">
+        <div className="site-container utility-inner">
+          <Link className="admin-link" href="/admin/login">
+            员工登录
+          </Link>
+          <nav aria-label="辅助导航">
+            {topLinks.map((link) => (
+              <Link key={link.href} href={link.href}>
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+      </div>
+      <div className="site-container main-nav">
+        <Link className="brand-mark" href="/">
+          <span>东面山</span>
+          <small>东方熟龄肌男士护肤</small>
+        </Link>
+        <nav className="primary-nav" aria-label="主导航">
+          {navItems.map((item) => (
+            <div className="nav-item" key={item.href}>
+              <Link href={item.href}>{item.label}</Link>
+              {item.children ? (
+                <div className="nav-dropdown">
+                  {item.children.map((child) => (
+                    <Link key={child.href} href={child.href}>
+                      {child.label}
+                    </Link>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          ))}
+        </nav>
+      </div>
+    </header>
+  );
+}
 
 export default function Page() {
   return (
-    <main className="page-shell">
-      <section className="hero section-block">
-        <div className="hero-overlay" />
-        <div className="container hero-content">
-          <p className="eyebrow">东方熟龄肌男士护肤开创者</p>
-          <h1 className="hero-title">东面山，向阳而生</h1>
-          <p className="hero-quote">你是他们的东面山，我愿做你的东面山</p>
-          <div className="hero-tags">
-            <span>8项专利成分</span>
-            <span>多效抗初老</span>
-            <span>精简三步护肤</span>
-          </div>
-          <div className="hero-buttons">
-            <a className="btn btn-primary" href="#story">
-              了解品牌
-            </a>
-            <a className="btn btn-secondary" href="#products">
-              查看产品
-            </a>
-          </div>
+    <main className="brand-site-shell">
+      <SiteHeader />
+
+      <section className="homepage-hero" aria-label="产品场景轮播">
+        <div className="hero-carousel">
+          {products.map((product) => (
+            <article className="hero-slide" key={product.slug}>
+              <img src={product.image} alt={`${product.shortName}场景占位图`} />
+              <div className="hero-shade" />
+              <div className="site-container hero-slide-content">
+                <p className="site-eyebrow">{product.routineStep}</p>
+                <h1>{product.name}</h1>
+                <p>{product.summary}</p>
+                <div className="hero-actions">
+                  <a className="site-button site-button-primary" href={product.shopUrl} target="_blank" rel="noreferrer">
+                    立即购买
+                  </a>
+                  <Link className="site-button site-button-ghost" href={`/chanpin/${product.slug}`}>
+                    查看详情
+                  </Link>
+                </div>
+              </div>
+            </article>
+          ))}
         </div>
       </section>
 
-      <section className="section-block section-soft">
-        <div className="container">
-          <h2 className="section-title">三重守护</h2>
-          <div className="values-grid">
-            {values.map((value) => (
-              <article className="card value-card" key={value.title}>
-                <div className="emoji-icon">{value.icon}</div>
-                <h3>{value.title}</h3>
-                <p>{value.desc}</p>
-              </article>
-            ))}
+      <section className="site-section routine-feature">
+        <div className="site-container split-feature">
+          <div className="feature-media">
+            <img src={placeholderImages.routine} alt="男士护肤场景占位图" />
           </div>
-        </div>
-      </section>
-
-      <section className="section-block" id="story">
-        <div className="container story-layout">
-          <div className="story-image-frame">
-            <img
-              src="https://media-1383535556.cos.ap-shanghai.myqcloud.com/%E6%99%A8%E9%97%B4%E6%B4%97%E6%BC%B1%E9%95%9C%E4%B8%AD%E7%85%A7.png"
-              alt="成熟男性形象"
-            />
-          </div>
-          <div className="story-copy">
-            <blockquote>
-              40岁生日那天，镜中的自己让我停下脚步。
-              <br />
-              发现熟龄男士护肤市场的空白，
-              <br />
-              东面山，因此诞生。
-            </blockquote>
+          <div className="feature-copy">
+            <p className="site-eyebrow">男士护肤场景</p>
+            <h2>把护肤放进成熟男性真实的一天</h2>
             <p>
-              东方男性的皮肤结构与衰老轨迹有着独特的规律。我们深知，成熟不仅是阅历的沉淀，更应是状态的从容。东面山专注于东方熟龄肌的深层需求，不仅解决表面的岁月痕迹，更致力于构建肌肤内在的强韧屏障。
+              东面山三步方案面向晨间通勤、剃须后、运动后、夜间修护等高频场景，重点解决熟龄男性常见的紧绷、暗沉、粗糙和疲惫感。
             </p>
-            <p>
-              为什么是东面山？因为我们懂你背负的责任，懂你对品质的苛求。专为东方熟龄肌男士研发，融合尖端科技与自然精粹，只为那份不可替代的沉稳与自信。
-            </p>
+            <div className="scene-grid">
+              {["商务通勤", "剃须敏感", "运动出汗", "熬夜疲惫"].map((scene) => (
+                <span key={scene}>{scene}</span>
+              ))}
+            </div>
+            <Link className="site-text-link" href="/jifuceping">
+              进入肌肤测试
+            </Link>
           </div>
         </div>
       </section>
 
-      <section className="section-block section-soft">
-        <div className="container">
-          <h2 className="section-title">8项专利成分矩阵</h2>
-          <div className="ingredients-grid">
-            {ingredients.map(([name, effect, icon]) => (
-              <article className="card ingredient-card" key={name}>
-                <div className="ingredient-icon">{icon}</div>
+      <section className="site-section products-band" id="chanpin">
+        <div className="site-container">
+          <div className="section-heading">
+            <p className="site-eyebrow">产品一览</p>
+            <h2>洁面、补水、修护，三件事讲清楚</h2>
+          </div>
+          <div className="product-overview-grid">
+            {products.map((product) => (
+              <article className="product-overview-card" key={product.slug}>
+                <img src={product.image} alt={`${product.shortName}占位图`} />
                 <div>
-                  <h3>{name}</h3>
-                  <p>{effect}</p>
+                  <p>{product.routineStep}</p>
+                  <h3>{product.shortName}</h3>
+                  <span>{product.subtitle}</span>
+                  <Link href={`/chanpin/${product.slug}`}>了解产品</Link>
                 </div>
               </article>
             ))}
@@ -145,63 +125,61 @@ export default function Page() {
         </div>
       </section>
 
-      <section className="section-block" id="products">
-        <div className="container">
-          <h2 className="section-title">精简三步护肤方案</h2>
-          <div className="products-grid">
-            {products.map((product, index) => (
-              <article className="product-card" key={product.title}>
-                <div className="step-badge">{index + 1}</div>
-                <div className="product-image-frame">
-                  <img src={productImage} alt={product.title} />
-                </div>
-                <h3>{product.title}</h3>
-                <p>{product.desc}</p>
-                <span>{product.target}</span>
+      <section className="site-section science-feature">
+        <div className="site-container split-feature split-feature-reverse">
+          <div className="feature-copy">
+            <p className="site-eyebrow">皮肤科普</p>
+            <h2>用研究内容回答熟龄男士护肤问题</h2>
+            <p>
+              这里承接参考站的教育内容逻辑，用科普文章解释屏障、剃须刺激、补水、紧致和成分协同，方便用户理解，也方便搜索引擎抓取。
+            </p>
+            <div className="article-teaser-list">
+              {scienceArticles.map((article) => (
+                <Link key={article.title} href={article.href}>
+                  <strong>{article.title}</strong>
+                  <span>{article.summary}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div className="feature-media">
+            <img src={placeholderImages.science} alt="皮肤科普研究占位图" />
+          </div>
+        </div>
+      </section>
+
+      <section className="site-section testimonial-band">
+        <div className="site-container">
+          <div className="section-heading">
+            <p className="site-eyebrow">用户证言</p>
+            <h2>东面山在真实使用场景里被看见</h2>
+          </div>
+          <div className="testimonial-grid">
+            {testimonials.map((item) => (
+              <article className="testimonial-card" key={item.name}>
+                <div className="testimonial-avatar" aria-hidden="true" />
+                <p>{item.quote}</p>
+                <strong>{item.name}</strong>
               </article>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="section-block section-soft">
-        <div className="container">
-          <h2 className="section-title">针对熟龄肌5大问题</h2>
-          <div className="problems-grid">
-            {problems.map(([title, solution, icon]) => (
-              <article className="card problem-card" key={title}>
-                <div className="emoji-icon">{icon}</div>
-                <h3>{title}</h3>
-                <p>{solution}</p>
-              </article>
-            ))}
+      <footer className="site-footer">
+        <div className="site-container footer-grid">
+          <div>
+            <strong>东面山</strong>
+            <p>东方熟龄肌男士护肤开创者。你是他们的东面山，我愿做你的东面山。</p>
           </div>
+          <nav>
+            <Link href="/chanpin">产品一览</Link>
+            <Link href="/hufuzhishi">教育</Link>
+            <Link href="/guanyudongmianshan">关于东面山</Link>
+            <Link href="/jifuceping">肌肤测试</Link>
+          </nav>
         </div>
-      </section>
-
-      <section className="section-block">
-        <div className="container">
-          <h2 className="section-title">专业背书</h2>
-          <div className="trust-grid">
-            {trustItems.map((item) => (
-              <article className="trust-card" key={item}>
-                <div className="trust-mark">●</div>
-                <h3>{item}</h3>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="closing section-block">
-        <div className="closing-overlay" />
-        <div className="container closing-content">
-          <p>
-            你守护家庭、团队、生活
-            <span>我们守护你的肌肤、体面与自信</span>
-          </p>
-        </div>
-      </section>
+      </footer>
     </main>
   );
 }

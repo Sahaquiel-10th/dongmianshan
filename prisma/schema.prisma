@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum ArticleStatus {
+  draft
+  published
+}
+
+enum PublishStatus {
+  draft
+  published
+}
+
+model Article {
+  id             String   @id @default(cuid())
+  title          String
+  slug           String   @unique
+  summary        String?
+  content        String
+  coverImage     String?
+  category       String
+  tags           String?
+  seoTitle       String?
+  seoDescription String?
+  status         ArticleStatus @default(draft)
+  author         String?
+  publishedAt    DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([category])
+  @@index([status])
+  @@index([updatedAt])
+}
+
+model Product {
+  id             String        @id @default(cuid())
+  name           String
+  slug           String        @unique
+  subtitle       String?
+  summary        String?       @db.Text
+  routineStep    String?
+  coverImage     String?
+  shopUrl        String?
+  benefits       Json?
+  scenes         Json?
+  seoTitle       String?
+  seoDescription String?
+  status         PublishStatus @default(draft)
+  sortOrder      Int           @default(0)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([status])
+  @@index([sortOrder])
+}
+
+model SiteSection {
+  id             String        @id @default(cuid())
+  key            String        @unique
+  title          String
+  eyebrow        String?
+  subtitle       String?       @db.Text
+  body           String?       @db.Text
+  mediaUrl       String?
+  ctaLabel       String?
+  ctaUrl         String?
+  items          Json?
+  status         PublishStatus @default(draft)
+  sortOrder      Int           @default(0)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([status])
+  @@index([sortOrder])
+}
