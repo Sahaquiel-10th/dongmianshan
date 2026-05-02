@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { getAuthConfigError, isDevPreviewAuthAvailable, redirectIfAuthenticated } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 type LoginPageProps = {
   searchParams?: Promise<{
     error?: string | string[];

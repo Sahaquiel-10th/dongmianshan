@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { isDevPreviewAuthAvailable, loginAdmin } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 export async function POST(request: Request) {
   if (!isDevPreviewAuthAvailable()) {
     return NextResponse.json(

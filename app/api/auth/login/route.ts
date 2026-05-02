@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { loginAdmin, verifyAdminCredentials } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 export async function POST(request: Request) {
   const formData = await request.formData();
   const username = String(formData.get("username") ?? "").trim();
