@@ -1,8 +1,16 @@
-import { NextResponse } from "next/server";
 import { loginAdmin, verifyAdminCredentials } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
+
+function redirectTo(path: string) {
+  return new Response(null, {
+    status: 303,
+    headers: {
+      Location: path,
+    },
+  });
+}
 
 export async function POST(request: Request) {
   const formData = await request.formData();
@@ -12,12 +20,10 @@ export async function POST(request: Request) {
   const result = verifyAdminCredentials(username, password);
 
   if (!result.ok) {
-    const loginUrl = new URL("/admin/login", request.url);
-    loginUrl.searchParams.set("error", result.error);
-    return NextResponse.redirect(loginUrl, 303);
+    return redirectTo(`/admin/login?error=${encodeURIComponent(result.error)}`);
   }
 
   await loginAdmin(username);
 
-  return NextResponse.redirect(new URL("/admin", request.url), 303);
+  return redirectTo("/admin");
 }

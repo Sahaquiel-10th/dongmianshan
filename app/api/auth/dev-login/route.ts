@@ -4,7 +4,7 @@ import { isDevPreviewAuthAvailable, loginAdmin } from "@/lib/auth";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-export async function POST(request: Request) {
+export async function POST() {
   if (!isDevPreviewAuthAvailable()) {
     return NextResponse.json(
       {
@@ -16,5 +16,10 @@ export async function POST(request: Request) {
 
   await loginAdmin("dev-preview");
 
-  return NextResponse.redirect(new URL("/admin", request.url), 303);
+  return new Response(null, {
+    status: 303,
+    headers: {
+      Location: "/admin",
+    },
+  });
 }
