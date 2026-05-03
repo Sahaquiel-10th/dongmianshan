@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { renderArticleMarkdown } from "@/lib/articles";
 import { ARTICLE_CATEGORIES } from "@/lib/categories";
 
 type ArticleFormMode = "create" | "edit";
@@ -47,6 +48,12 @@ export function ArticleForm({ mode, articleId, initialValues }: ArticleFormProps
   const [values, setValues] = useState<ArticleFormValues>(initialValues ?? DEFAULT_VALUES);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const previewUrl =
+    values.category && values.slug && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(values.slug)
+      ? `/${values.category}/${values.slug}`
+      : null;
+  const previewHtml = renderArticleMarkdown(values.content || "正文预览会显示在这里。");
 
   function updateField<K extends keyof ArticleFormValues>(field: K, value: ArticleFormValues[K]) {
     setValues((current) => ({
@@ -90,6 +97,36 @@ export function ArticleForm({ mode, articleId, initialValues }: ArticleFormProps
   return (
     <form className="cms-admin-form cms-admin-form-panel" onSubmit={handleSubmit}>
       {errorMessage ? <p className="cms-admin-alert cms-admin-alert-error">{errorMessage}</p> : null}
+
+      <div className="cms-admin-form-actions cms-admin-form-actions-between">
+        <div className="cms-admin-form-actions">
+          <button className="cms-admin-button" type="button" onClick={() => setIsPreviewOpen((current) => !current)}>
+            {isPreviewOpen ? "收起预览" : "预览文章"}
+          </button>
+          {previewUrl ? (
+            <a className="cms-admin-button" href={previewUrl} target="_blank" rel="noreferrer">
+              打开前台页面
+            </a>
+          ) : null}
+        </div>
+        <p className="cms-admin-inline-hint">草稿不会在前台公开显示；发布后可通过前台页面链接查看。</p>
+      </div>
+
+      {isPreviewOpen ? (
+        <section className="cms-admin-preview-panel">
+          <div className="cms-content-article-header cms-admin-preview-header">
+            <p className="cms-content-eyebrow">{ARTICLE_CATEGORIES.find((item) => item.slug === values.category)?.label}</p>
+            <h1>{values.title || "文章标题预览"}</h1>
+            {values.summary ? <p className="cms-content-lead">{values.summary}</p> : null}
+            {values.coverImage ? (
+              <div className="cms-content-cover-frame">
+                <img src={values.coverImage} alt={values.title || "文章封面预览"} />
+              </div>
+            ) : null}
+          </div>
+          <div className="cms-content-prose" dangerouslySetInnerHTML={{ __html: previewHtml }} />
+        </section>
+      ) : null}
 
       <div className="cms-admin-form-grid">
         <label className="cms-admin-field">

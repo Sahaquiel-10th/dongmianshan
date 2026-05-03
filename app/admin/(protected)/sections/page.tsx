@@ -3,19 +3,32 @@ import { SITE_SECTION_CONFIGS } from "@/lib/site-sections";
 import { prisma } from "@/lib/prisma";
 
 export default async function AdminSectionsPage() {
-  const sections = await prisma.siteSection.findMany({
-    where: {
-      key: {
-        in: SITE_SECTION_CONFIGS.map((section) => section.key),
+  let setupError: string | null = null;
+  let sections: {
+    key: string;
+    status: string;
+    updatedAt: Date;
+    items: unknown;
+  }[] = [];
+
+  try {
+    sections = await prisma.siteSection.findMany({
+      where: {
+        key: {
+          in: SITE_SECTION_CONFIGS.map((section) => section.key),
+        },
       },
-    },
-    select: {
-      key: true,
-      status: true,
-      updatedAt: true,
-      items: true,
-    },
-  });
+      select: {
+        key: true,
+        status: true,
+        updatedAt: true,
+        items: true,
+      },
+    });
+  } catch {
+    setupError = "官网板块表暂时无法读取。通常是线上数据库还没有同步 SiteSection 表，请先执行 npm run prisma:push。";
+  }
+
   const sectionMap = new Map(sections.map((section) => [section.key, section]));
 
   return (
@@ -28,6 +41,7 @@ export default async function AdminSectionsPage() {
         </div>
       </div>
 
+      {setupError ? <p className="cms-admin-alert cms-admin-alert-error">{setupError}</p> : null}
       <div className="cms-admin-card-grid">
         {SITE_SECTION_CONFIGS.map((config) => {
           const section = sectionMap.get(config.key);

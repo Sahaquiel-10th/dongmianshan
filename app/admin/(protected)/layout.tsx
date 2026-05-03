@@ -24,6 +24,9 @@ export default async function AdminProtectedLayout({
           <Link className="cms-admin-button" href="/admin">
             后台首页
           </Link>
+          <Link className="cms-admin-button" href="/" target="_blank">
+            返回官网
+          </Link>
           <Link className="cms-admin-button" href="/admin/articles">
             文章管理
           </Link>

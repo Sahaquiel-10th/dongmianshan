@@ -19,6 +19,22 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
     where: {
       id,
     },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      subtitle: true,
+      summary: true,
+      routineStep: true,
+      coverImage: true,
+      shopUrl: true,
+      benefits: true,
+      scenes: true,
+      seoTitle: true,
+      seoDescription: true,
+      status: true,
+      sortOrder: true,
+    },
   });
 
   if (!product) {

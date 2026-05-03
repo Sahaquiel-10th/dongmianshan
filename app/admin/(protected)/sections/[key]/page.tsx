@@ -18,11 +18,19 @@ export default async function AdminSectionPage({ params }: AdminSectionPageProps
     notFound();
   }
 
-  const stored = await prisma.siteSection.findUnique({
-    where: {
-      key,
-    },
-  });
+  let setupError: string | null = null;
+  let stored: Awaited<ReturnType<typeof prisma.siteSection.findUnique>> = null;
+
+  try {
+    stored = await prisma.siteSection.findUnique({
+      where: {
+        key,
+      },
+    });
+  } catch {
+    setupError = "官网板块表暂时无法读取。可以先查看默认表单结构；保存前需要先在部署环境执行 npm run prisma:push。";
+  }
+
   const section = stored ? toSectionContent(stored) : getFallbackSection(config.key);
 
   return (
@@ -38,6 +46,7 @@ export default async function AdminSectionPage({ params }: AdminSectionPageProps
         </Link>
       </div>
 
+      {setupError ? <p className="cms-admin-alert cms-admin-alert-error">{setupError}</p> : null}
       <SiteSectionForm section={section} label={config.label} hint={config.hint} itemLabel={config.itemLabel} />
     </section>
   );

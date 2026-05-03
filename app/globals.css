@@ -610,6 +610,11 @@ img {
   margin-top: 24px;
 }
 
+.cms-admin-form-actions-between {
+  align-items: center;
+  justify-content: space-between;
+}
+
 .cms-admin-card {
   flex: 1 1 280px;
   padding: 24px;
@@ -735,6 +740,30 @@ img {
 .cms-admin-preview-banner {
   background: rgba(0, 59, 92, 0.08);
   color: var(--primary-blue);
+}
+
+.cms-admin-inline-hint {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.cms-admin-preview-panel {
+  overflow: hidden;
+  padding: 24px;
+  border: 1px solid rgba(0, 59, 92, 0.12);
+  border-radius: 18px;
+  background: #fff;
+}
+
+.cms-admin-preview-header {
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(0, 59, 92, 0.08);
+}
+
+.cms-admin-preview-header .cms-content-cover-frame {
+  margin-top: 18px;
 }
 
 .cms-admin-preview-banner {
