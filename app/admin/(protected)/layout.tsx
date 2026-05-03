@@ -27,6 +27,12 @@ export default async function AdminProtectedLayout({
           <Link className="cms-admin-button" href="/admin/articles">
             文章管理
           </Link>
+          <Link className="cms-admin-button" href="/admin/products">
+            产品一览
+          </Link>
+          <Link className="cms-admin-button" href="/admin/sections">
+            官网板块
+          </Link>
           <Link className="cms-admin-button cms-admin-button-primary" href="/admin/articles/new">
             新建文章
           </Link>

@@ -31,11 +31,13 @@ model Article {
   status         ArticleStatus @default(draft)
   author         String?
   publishedAt    DateTime?
+  deletedAt      DateTime?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
   @@index([category])
   @@index([status])
+  @@index([deletedAt])
   @@index([updatedAt])
 }
 
@@ -54,11 +56,13 @@ model Product {
   seoDescription String?
   status         PublishStatus @default(draft)
   sortOrder      Int           @default(0)
+  deletedAt      DateTime?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
   @@index([status])
   @@index([sortOrder])
+  @@index([deletedAt])
 }
 
 model SiteSection {

@@ -34,7 +34,13 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   }
 
   const categoryItem = getPublishedCategoryBySlug(category);
-  const articles = await getPublishedArticlesByCategory(category);
+  let articles: Awaited<ReturnType<typeof getPublishedArticlesByCategory>> = [];
+
+  try {
+    articles = await getPublishedArticlesByCategory(category);
+  } catch {
+    articles = [];
+  }
 
   return (
     <main className="cms-content-shell">

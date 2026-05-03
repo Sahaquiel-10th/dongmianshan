@@ -11,6 +11,8 @@ type ArticleRouteContext = {
   }>;
 };
 
+const RETENTION_DAYS = 15;
+
 function handleArticleError(error: unknown) {
   if (error instanceof CmsAuthError) {
     return NextResponse.json(
@@ -124,9 +126,13 @@ export async function DELETE(_request: Request, context: ArticleRouteContext) {
 
     const { id } = await context.params;
 
-    await prisma.article.delete({
+    await prisma.article.update({
       where: {
         id,
+      },
+      data: {
+        deletedAt: new Date(),
+        status: "draft",
       },
     });
 
@@ -143,6 +149,55 @@ export async function DELETE(_request: Request, context: ArticleRouteContext) {
       );
     }
 
+    return handleArticleError(error);
+  }
+}
+
+export async function PATCH(_request: Request, context: ArticleRouteContext) {
+  try {
+    await requireAdminApiUser();
+
+    const { id } = await context.params;
+    const existing = await prisma.article.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!existing) {
+      return NextResponse.json(
+        {
+          error: "文章不存在。",
+        },
+        { status: 404 },
+      );
+    }
+
+    if (
+      existing.deletedAt &&
+      Date.now() - existing.deletedAt.getTime() > RETENTION_DAYS * 24 * 60 * 60 * 1000
+    ) {
+      return NextResponse.json(
+        {
+          error: "该内容已超过 15 天保留期，不能恢复。",
+        },
+        { status: 400 },
+      );
+    }
+
+    const article = await prisma.article.update({
+      where: {
+        id,
+      },
+      data: {
+        deletedAt: null,
+      },
+    });
+
+    return NextResponse.json({
+      item: article,
+    });
+  } catch (error) {
     return handleArticleError(error);
   }
 }

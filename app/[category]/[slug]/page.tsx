@@ -26,7 +26,11 @@ export async function generateMetadata({ params }: ArticleDetailPageProps) {
     return {};
   }
 
-  return getPublishedArticleMetadata(category, slug);
+  try {
+    return await getPublishedArticleMetadata(category, slug);
+  } catch {
+    return {};
+  }
 }
 
 export default async function ArticleDetailPage({ params }: ArticleDetailPageProps) {
@@ -36,7 +40,13 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
     notFound();
   }
 
-  const article = await getPublishedArticleBySlug(category, slug);
+  let article: Awaited<ReturnType<typeof getPublishedArticleBySlug>> = null;
+
+  try {
+    article = await getPublishedArticleBySlug(category, slug);
+  } catch {
+    article = null;
+  }
 
   if (!article) {
     notFound();

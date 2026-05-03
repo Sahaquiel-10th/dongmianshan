@@ -10,6 +10,7 @@ type ArticleListItem = {
   title: string;
   category: string;
   status: string;
+  deletedAt: Date | string | null;
   updatedAt: Date | string;
 };
 
@@ -20,10 +21,11 @@ type ArticleListProps = {
 export function ArticleList({ articles }: ArticleListProps) {
   const router = useRouter();
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [restoringId, setRestoringId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   async function handleDelete(id: string) {
-    const confirmed = window.confirm("确定要删除这篇文章吗？此操作无法撤销。");
+    const confirmed = window.confirm("确定要删除这篇文章吗？15 天内可一键恢复。");
 
     if (!confirmed) {
       return;
@@ -51,6 +53,28 @@ export function ArticleList({ articles }: ArticleListProps) {
     }
   }
 
+  async function handleRestore(id: string) {
+    setRestoringId(id);
+    setErrorMessage(null);
+
+    try {
+      const response = await fetch(`/api/articles/${id}`, {
+        method: "PATCH",
+      });
+      const data = (await response.json()) as { error?: string };
+
+      if (!response.ok) {
+        throw new Error(data.error ?? "恢复文章失败。");
+      }
+
+      router.refresh();
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "恢复文章失败。");
+    } finally {
+      setRestoringId(null);
+    }
+  }
+
   return (
     <div className="cms-admin-table-wrap">
       <div className="cms-admin-table-toolbar">
@@ -75,6 +99,7 @@ export function ArticleList({ articles }: ArticleListProps) {
               <th>标题</th>
               <th>分类</th>
               <th>状态</th>
+              <th>删除状态</th>
               <th>更新时间</th>
               <th>操作</th>
             </tr>
@@ -85,20 +110,34 @@ export function ArticleList({ articles }: ArticleListProps) {
                 <td>{article.title}</td>
                 <td>{getArticleCategoryLabel(article.category)}</td>
                 <td>{article.status === "published" ? "已发布" : "草稿"}</td>
+                <td>{article.deletedAt ? "已删除，可恢复" : "正常"}</td>
                 <td>{new Date(article.updatedAt).toLocaleString("zh-CN")}</td>
                 <td>
                   <div className="cms-admin-row-actions">
-                    <Link className="cms-admin-button" href={`/admin/articles/${article.id}/edit`}>
-                      编辑
-                    </Link>
-                    <button
-                      className="cms-admin-button cms-admin-button-danger"
-                      type="button"
-                      onClick={() => handleDelete(article.id)}
-                      disabled={deletingId === article.id}
-                    >
-                      {deletingId === article.id ? "删除中..." : "删除"}
-                    </button>
+                    {article.deletedAt ? (
+                      <button
+                        className="cms-admin-button cms-admin-button-primary"
+                        type="button"
+                        onClick={() => handleRestore(article.id)}
+                        disabled={restoringId === article.id}
+                      >
+                        {restoringId === article.id ? "恢复中..." : "恢复"}
+                      </button>
+                    ) : (
+                      <>
+                        <Link className="cms-admin-button" href={`/admin/articles/${article.id}/edit`}>
+                          编辑
+                        </Link>
+                        <button
+                          className="cms-admin-button cms-admin-button-danger"
+                          type="button"
+                          onClick={() => handleDelete(article.id)}
+                          disabled={deletingId === article.id}
+                        >
+                          {deletingId === article.id ? "删除中..." : "删除"}
+                        </button>
+                      </>
+                    )}
                   </div>
                 </td>
               </tr>

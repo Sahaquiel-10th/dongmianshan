@@ -1,12 +1,10 @@
 import Link from "next/link";
 import {
   navItems,
-  placeholderImages,
-  products,
-  scienceArticles,
-  testimonials,
   topLinks,
 } from "@/lib/homepage";
+import { getPublishedProducts } from "@/lib/products";
+import { getPublishedSiteSection } from "@/lib/site-sections";
 
 function SiteHeader() {
   return (
@@ -51,26 +49,65 @@ function SiteHeader() {
   );
 }
 
-export default function Page() {
+export default async function Page() {
+  const [products, hero, scenes, science, testimonials] = await Promise.all([
+    getPublishedProducts(),
+    getPublishedSiteSection("homepage-hero"),
+    getPublishedSiteSection("mens-scenes"),
+    getPublishedSiteSection("skin-science"),
+    getPublishedSiteSection("testimonials"),
+  ]);
+  const heroSlides =
+    hero.items.length > 0
+      ? hero.items.map((item) => ({
+          key: item.id,
+          eyebrow: item.subtitle ?? hero.eyebrow ?? "",
+          title: item.title,
+          summary: item.body ?? hero.subtitle ?? "",
+          image: item.mediaUrl ?? hero.mediaUrl ?? "",
+          primaryLabel: item.ctaLabel ?? hero.ctaLabel ?? "查看详情",
+          primaryUrl: item.ctaUrl ?? hero.ctaUrl ?? "/chanpin",
+          secondaryUrl: "/chanpin",
+        }))
+      : products.map((product) => ({
+          key: product.slug,
+          eyebrow: product.routineStep,
+          title: product.name,
+          summary: product.summary,
+          image: product.image,
+          primaryLabel: "立即购买",
+          primaryUrl: product.shopUrl,
+          secondaryUrl: `/chanpin/${product.slug}`,
+        }));
+
   return (
     <main className="brand-site-shell">
       <SiteHeader />
 
       <section className="homepage-hero" aria-label="产品场景轮播">
         <div className="hero-carousel">
-          {products.map((product) => (
-            <article className="hero-slide" key={product.slug}>
-              <img src={product.image} alt={`${product.shortName}场景占位图`} />
+          {heroSlides.length === 0 ? (
+            <article className="hero-slide">
+              <div className="site-container hero-slide-content">
+                <p className="site-eyebrow">暂无内容</p>
+                <h1>首页轮播待维护</h1>
+                <p>请在员工后台进入首页轮播或产品一览，补充图片、文字和跳转链接。</p>
+              </div>
+            </article>
+          ) : null}
+          {heroSlides.map((slide) => (
+            <article className="hero-slide" key={slide.key}>
+              {slide.image ? <img src={slide.image} alt={`${slide.title}场景图`} /> : null}
               <div className="hero-shade" />
               <div className="site-container hero-slide-content">
-                <p className="site-eyebrow">{product.routineStep}</p>
-                <h1>{product.name}</h1>
-                <p>{product.summary}</p>
+                <p className="site-eyebrow">{slide.eyebrow}</p>
+                <h1>{slide.title}</h1>
+                <p>{slide.summary}</p>
                 <div className="hero-actions">
-                  <a className="site-button site-button-primary" href={product.shopUrl} target="_blank" rel="noreferrer">
-                    立即购买
+                  <a className="site-button site-button-primary" href={slide.primaryUrl} target="_blank" rel="noreferrer">
+                    {slide.primaryLabel}
                   </a>
-                  <Link className="site-button site-button-ghost" href={`/chanpin/${product.slug}`}>
+                  <Link className="site-button site-button-ghost" href={slide.secondaryUrl}>
                     查看详情
                   </Link>
                 </div>
@@ -83,22 +120,22 @@ export default function Page() {
       <section className="site-section routine-feature">
         <div className="site-container split-feature">
           <div className="feature-media">
-            <img src={placeholderImages.routine} alt="男士护肤场景占位图" />
+            {scenes.mediaUrl ? <img src={scenes.mediaUrl} alt="男士护肤场景占位图" /> : null}
           </div>
           <div className="feature-copy">
-            <p className="site-eyebrow">男士护肤场景</p>
-            <h2>把护肤放进成熟男性真实的一天</h2>
-            <p>
-              东面山三步方案面向晨间通勤、剃须后、运动后、夜间修护等高频场景，重点解决熟龄男性常见的紧绷、暗沉、粗糙和疲惫感。
-            </p>
+            <p className="site-eyebrow">{scenes.eyebrow}</p>
+            <h2>{scenes.title}</h2>
+            <p>{scenes.subtitle}</p>
             <div className="scene-grid">
-              {["商务通勤", "剃须敏感", "运动出汗", "熬夜疲惫"].map((scene) => (
-                <span key={scene}>{scene}</span>
+              {scenes.items.map((scene) => (
+                <span key={scene.id}>{scene.title}</span>
               ))}
             </div>
-            <Link className="site-text-link" href="/jifuceping">
-              进入肌肤测试
-            </Link>
+            {scenes.ctaUrl ? (
+              <Link className="site-text-link" href={scenes.ctaUrl}>
+                {scenes.ctaLabel ?? "查看更多"}
+              </Link>
+            ) : null}
           </div>
         </div>
       </section>
@@ -129,21 +166,19 @@ export default function Page() {
         <div className="site-container split-feature split-feature-reverse">
           <div className="feature-copy">
             <p className="site-eyebrow">皮肤科普</p>
-            <h2>用研究内容回答熟龄男士护肤问题</h2>
-            <p>
-              这里承接参考站的教育内容逻辑，用科普文章解释屏障、剃须刺激、补水、紧致和成分协同，方便用户理解，也方便搜索引擎抓取。
-            </p>
+            <h2>{science.title}</h2>
+            <p>{science.subtitle}</p>
             <div className="article-teaser-list">
-              {scienceArticles.map((article) => (
-                <Link key={article.title} href={article.href}>
+              {science.items.map((article) => (
+                <Link key={article.id} href={article.ctaUrl ?? "/hufuzhishi"}>
                   <strong>{article.title}</strong>
-                  <span>{article.summary}</span>
+                  <span>{article.body}</span>
                 </Link>
               ))}
             </div>
           </div>
           <div className="feature-media">
-            <img src={placeholderImages.science} alt="皮肤科普研究占位图" />
+            {science.mediaUrl ? <img src={science.mediaUrl} alt="皮肤科普研究占位图" /> : null}
           </div>
         </div>
       </section>
@@ -151,15 +186,15 @@ export default function Page() {
       <section className="site-section testimonial-band">
         <div className="site-container">
           <div className="section-heading">
-            <p className="site-eyebrow">用户证言</p>
-            <h2>东面山在真实使用场景里被看见</h2>
+            <p className="site-eyebrow">{testimonials.eyebrow}</p>
+            <h2>{testimonials.title}</h2>
           </div>
           <div className="testimonial-grid">
-            {testimonials.map((item) => (
-              <article className="testimonial-card" key={item.name}>
+            {testimonials.items.map((item) => (
+              <article className="testimonial-card" key={item.id}>
                 <div className="testimonial-avatar" aria-hidden="true" />
-                <p>{item.quote}</p>
-                <strong>{item.name}</strong>
+                <p>{item.body}</p>
+                <strong>{item.title}</strong>
               </article>
             ))}
           </div>

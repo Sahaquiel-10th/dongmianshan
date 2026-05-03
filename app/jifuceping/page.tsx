@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getPublishedSiteSection } from "@/lib/site-sections";
 
 export const metadata: Metadata = {
   title: "肌肤测试 - 东面山",
@@ -8,21 +9,24 @@ export const metadata: Metadata = {
   },
 };
 
-export default function SkinQuizPage() {
+export default async function SkinQuizPage() {
+  const quiz = await getPublishedSiteSection("skin-test");
+
   return (
     <main className="brand-subpage">
       <section className="subpage-hero">
         <div className="site-container">
-          <p className="site-eyebrow">肌肤测试</p>
-          <h1>找到适合你的三步护肤程序</h1>
-          <p>当前先搭建入口和页面结构，后续可以做成问卷：肤质、剃须频率、出油情况、干纹暗沉、使用场景，最终推荐产品组合和文章内容。</p>
+          <p className="site-eyebrow">{quiz.eyebrow}</p>
+          <h1>{quiz.title}</h1>
+          <p>{quiz.subtitle}</p>
         </div>
       </section>
       <section className="site-section">
         <div className="site-container quiz-placeholder">
-          {["清洁后是否紧绷", "剃须后是否泛红", "白天是否容易出油", "是否关注细纹轮廓"].map((question, index) => (
-            <label key={question}>
-              <span>{index + 1}. {question}</span>
+          {quiz.items.length === 0 ? <p>暂无测试题，请在员工后台进入肌肤测试补充。</p> : null}
+          {quiz.items.map((question, index) => (
+            <label key={question.id}>
+              <span>{index + 1}. {question.title}</span>
               <select defaultValue="">
                 <option value="" disabled>请选择</option>
                 <option>经常</option>

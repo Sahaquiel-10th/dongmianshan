@@ -28,6 +28,7 @@ function createMockArticle(input: {
     status: "published" as ArticleStatus,
     author: "东面山内容编辑部",
     publishedAt: now,
+    deletedAt: null,
     createdAt: now,
     updatedAt: now,
   };

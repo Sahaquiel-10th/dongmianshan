@@ -7,7 +7,7 @@ export default function AdminDashboardPage() {
         <div>
           <p className="cms-admin-eyebrow">Dashboard</p>
           <h2>内容管理后台</h2>
-          <p>当前阶段仅包含登录、文章管理和基础内容录入。</p>
+          <p>可管理文章、产品和官网各内容板块。删除内容保留 15 天，可一键恢复。</p>
         </div>
       </div>
 
@@ -25,6 +25,22 @@ export default function AdminDashboardPage() {
           <p>创建新的 SEO/GEO 内容草稿，后续再补前台展示页。</p>
           <Link className="cms-admin-button cms-admin-button-primary" href="/admin/articles/new">
             开始写文章
+          </Link>
+        </article>
+
+        <article className="cms-admin-card">
+          <h3>产品一览</h3>
+          <p>维护产品图、卖点、场景、购买链接和排序。</p>
+          <Link className="cms-admin-button" href="/admin/products">
+            进入产品管理
+          </Link>
+        </article>
+
+        <article className="cms-admin-card">
+          <h3>官网板块</h3>
+          <p>维护首页轮播、男士护肤场景、用户证言、教育、关于和肌肤测试。</p>
+          <Link className="cms-admin-button" href="/admin/sections">
+            编辑官网板块
           </Link>
         </article>
       </div>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { ARTICLE_CATEGORIES } from "@/lib/categories";
+import { getPublishedSiteSection } from "@/lib/site-sections";
 
 export const metadata: Metadata = {
   title: "教育 - 东面山内容中心",
@@ -10,14 +11,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function EducationPage() {
+export default async function EducationPage() {
+  const education = await getPublishedSiteSection("education");
+
   return (
     <main className="brand-subpage">
       <section className="subpage-hero">
         <div className="site-container">
-          <p className="site-eyebrow">教育</p>
-          <h1>护肤知识入口</h1>
-          <p>这里承接参考站的 skincare education 逻辑，用拼音路径作为中国国内 SEO 的内容入口。</p>
+          <p className="site-eyebrow">{education.eyebrow}</p>
+          <h1>{education.title}</h1>
+          <p>{education.subtitle}</p>
         </div>
       </section>
       <section className="site-section">

@@ -185,6 +185,7 @@ export async function getPublishedArticlesByCategory(category: ArticleCategorySl
     where: {
       category,
       status: "published",
+      deletedAt: null,
     },
     orderBy: [{ publishedAt: "desc" }, { updatedAt: "desc" }],
   });
@@ -198,6 +199,7 @@ export async function getAllPublishedArticles() {
   return prisma.article.findMany({
     where: {
       status: "published",
+      deletedAt: null,
     },
     orderBy: [{ publishedAt: "desc" }, { updatedAt: "desc" }],
   });
@@ -215,6 +217,7 @@ export async function getPublishedArticleBySlug(category: ArticleCategorySlug, s
       category,
       slug,
       status: "published",
+      deletedAt: null,
     },
   });
 }

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { products } from "@/lib/homepage";
+import { getPublishedProducts } from "@/lib/products";
 
 export const metadata: Metadata = {
   title: "产品一览 - 东面山",
@@ -10,7 +10,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ProductsPage() {
+export default async function ProductsPage() {
+  const products = await getPublishedProducts();
+
   return (
     <main className="brand-subpage">
       <section className="subpage-hero">
@@ -22,6 +24,11 @@ export default function ProductsPage() {
       </section>
       <section className="site-section">
         <div className="site-container product-list">
+          {products.length === 0 ? (
+            <div className="cms-content-empty">
+              <p>暂无产品内容，请在员工后台进入产品一览补充。</p>
+            </div>
+          ) : null}
           {products.map((product) => (
             <article className="product-row" key={product.slug}>
               <img src={product.image} alt={`${product.shortName}占位图`} />

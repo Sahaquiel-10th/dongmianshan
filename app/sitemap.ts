@@ -7,7 +7,13 @@ import { getAbsoluteUrl } from "@/lib/site";
 export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const articles = await getAllPublishedArticles();
+  let articles: Awaited<ReturnType<typeof getAllPublishedArticles>> = [];
+
+  try {
+    articles = await getAllPublishedArticles();
+  } catch {
+    articles = [];
+  }
 
   const staticEntries: MetadataRoute.Sitemap = [
     {

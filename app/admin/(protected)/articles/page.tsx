@@ -11,6 +11,7 @@ export default async function AdminArticlesPage() {
       title: true,
       category: true,
       status: true,
+      deletedAt: true,
       updatedAt: true,
     },
   });
