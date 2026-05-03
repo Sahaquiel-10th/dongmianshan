@@ -87,18 +87,20 @@ export async function runCmsDatabaseDiagnostics(): Promise<CmsDatabaseDiagnostic
       SELECT TABLE_NAME AS tableName
       FROM INFORMATION_SCHEMA.TABLES
       WHERE TABLE_SCHEMA = DATABASE()
-        AND TABLE_NAME IN ('Article', 'Product', 'SiteSection')
+        AND LOWER(TABLE_NAME) IN ('article', 'product', 'sitesection')
     `;
     const columnRows = await prisma.$queryRaw<ColumnRow[]>`
       SELECT TABLE_NAME AS tableName, COLUMN_NAME AS columnName
       FROM INFORMATION_SCHEMA.COLUMNS
       WHERE TABLE_SCHEMA = DATABASE()
-        AND TABLE_NAME IN ('Article', 'Product', 'SiteSection')
-        AND COLUMN_NAME IN ('deletedAt')
+        AND LOWER(TABLE_NAME) IN ('article', 'product', 'sitesection')
+        AND LOWER(COLUMN_NAME) = 'deletedat'
     `;
 
-    const tables = new Set(tableRows.map((row) => row.tableName));
-    const columns = new Set(columnRows.map((row) => `${row.tableName}.${row.columnName}`));
+    const tables = new Set(tableRows.map((row) => row.tableName.toLowerCase()));
+    const columns = new Set(
+      columnRows.map((row) => `${row.tableName.toLowerCase()}.${row.columnName.toLowerCase()}`),
+    );
 
     return {
       canConnect: true,
@@ -107,8 +109,9 @@ export async function runCmsDatabaseDiagnostics(): Promise<CmsDatabaseDiagnostic
       error: null,
       checks: REQUIRED_CHECKS.map((check) => {
         const columnName = getColumnName(check);
-        const hasTable = tables.has(check.tableName);
-        const ok = columnName ? hasTable && columns.has(`${check.tableName}.${columnName}`) : hasTable;
+        const tableName = check.tableName.toLowerCase();
+        const hasTable = tables.has(tableName);
+        const ok = columnName ? hasTable && columns.has(`${tableName}.${columnName.toLowerCase()}`) : hasTable;
 
         return {
           key: check.key,
