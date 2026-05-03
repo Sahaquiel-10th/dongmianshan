@@ -41,7 +41,11 @@ export default async function AdminSectionsPage() {
         </div>
       </div>
 
-      {setupError ? <p className="cms-admin-alert cms-admin-alert-error">{setupError}</p> : null}
+      {setupError ? (
+        <p className="cms-admin-alert cms-admin-alert-error">
+          {setupError} <Link href="/admin/setup">查看数据库检查</Link>
+        </p>
+      ) : null}
       <div className="cms-admin-card-grid">
         {SITE_SECTION_CONFIGS.map((config) => {
           const section = sectionMap.get(config.key);

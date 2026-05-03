@@ -610,6 +610,13 @@ img {
   margin-top: 24px;
 }
 
+.cms-admin-setup-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
 .cms-admin-form-actions-between {
   align-items: center;
   justify-content: space-between;
@@ -736,6 +743,11 @@ img {
   color: #b91c1c;
 }
 
+.cms-admin-alert a {
+  text-decoration: underline;
+  font-weight: 700;
+}
+
 .cms-admin-alert-info,
 .cms-admin-preview-banner {
   background: rgba(0, 59, 92, 0.08);
@@ -764,6 +776,25 @@ img {
 
 .cms-admin-preview-header .cms-content-cover-frame {
   margin-top: 18px;
+}
+
+.cms-admin-command-box {
+  display: grid;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 14px;
+  background: #0f2940;
+  color: #fff;
+}
+
+.cms-admin-command-box p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.cms-admin-command-box code {
+  font: 700 0.95rem/1.6 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 }
 
 .cms-admin-preview-banner {

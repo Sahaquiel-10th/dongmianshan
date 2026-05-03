@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { ArticleList } from "@/components/admin/article-list";
+import Link from "next/link";
 
 export default async function AdminArticlesPage() {
   let setupError: string | null = null;
@@ -61,7 +62,11 @@ export default async function AdminArticlesPage() {
         </div>
       </div>
 
-      {setupError ? <p className="cms-admin-alert cms-admin-alert-error">{setupError}</p> : null}
+      {setupError ? (
+        <p className="cms-admin-alert cms-admin-alert-error">
+          {setupError} <Link href="/admin/setup">查看数据库检查</Link>
+        </p>
+      ) : null}
       <ArticleList articles={articles} />
     </section>
   );

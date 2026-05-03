@@ -46,7 +46,11 @@ export default async function AdminSectionPage({ params }: AdminSectionPageProps
         </Link>
       </div>
 
-      {setupError ? <p className="cms-admin-alert cms-admin-alert-error">{setupError}</p> : null}
+      {setupError ? (
+        <p className="cms-admin-alert cms-admin-alert-error">
+          {setupError} <Link href="/admin/setup">查看数据库检查</Link>
+        </p>
+      ) : null}
       <SiteSectionForm section={section} label={config.label} hint={config.hint} itemLabel={config.itemLabel} />
     </section>
   );
