@@ -6,6 +6,8 @@ import {
 import { getPublishedProducts } from "@/lib/products";
 import { getPublishedSiteSection } from "@/lib/site-sections";
 
+export const dynamic = "force-dynamic";
+
 function SiteHeader() {
   return (
     <header className="site-header">

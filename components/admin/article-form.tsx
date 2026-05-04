@@ -49,6 +49,7 @@ export function ArticleForm({ mode, articleId, initialValues }: ArticleFormProps
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [submitIntent, setSubmitIntent] = useState<"save" | "preview">("save");
   const previewUrl =
     values.category && values.slug && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(values.slug)
       ? `/${values.category}/${values.slug}`
@@ -68,24 +69,34 @@ export function ArticleForm({ mode, articleId, initialValues }: ArticleFormProps
     setErrorMessage(null);
 
     try {
+      const payload = {
+        ...values,
+        status: mode === "create" ? "draft" : values.status,
+        publishedAt: values.publishedAt || null,
+      };
       const response = await fetch(mode === "create" ? "/api/articles" : `/api/articles/${articleId}`, {
         method: mode === "create" ? "POST" : "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ...values,
-          publishedAt: values.publishedAt || null,
-        }),
+        body: JSON.stringify(payload),
       });
 
-      const data = (await response.json()) as { error?: string };
+      const data = (await response.json()) as { error?: string; item?: { id: string } };
 
       if (!response.ok) {
         throw new Error(data.error ?? "保存文章失败。");
       }
 
-      router.push("/admin/articles");
+      const savedArticleId = mode === "create" ? data.item?.id : articleId;
+
+      if (submitIntent === "preview" && savedArticleId) {
+        router.push(`/admin/articles/${savedArticleId}/preview`);
+      } else if (savedArticleId) {
+        router.push(`/admin/articles/${savedArticleId}/edit`);
+      } else {
+        router.push("/admin/articles");
+      }
       router.refresh();
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "保存文章失败。");
@@ -109,7 +120,9 @@ export function ArticleForm({ mode, articleId, initialValues }: ArticleFormProps
             </a>
           ) : null}
         </div>
-        <p className="cms-admin-inline-hint">草稿不会在前台公开显示；发布后可通过前台页面链接查看。</p>
+        <p className="cms-admin-inline-hint">
+          当前状态：{values.status === "published" ? "已发布" : "草稿"}。草稿不会在前台公开显示，请保存后进入预览页发布。
+        </p>
       </div>
 
       {isPreviewOpen ? (
@@ -150,13 +163,7 @@ export function ArticleForm({ mode, articleId, initialValues }: ArticleFormProps
           </select>
         </label>
 
-        <label className="cms-admin-field">
-          <span>状态</span>
-          <select value={values.status} onChange={(event) => updateField("status", event.target.value)}>
-            <option value="draft">draft</option>
-            <option value="published">published</option>
-          </select>
-        </label>
+        <input type="hidden" value={values.status} />
 
         <label className="cms-admin-field cms-admin-field-full">
           <span>摘要</span>
@@ -212,8 +219,21 @@ export function ArticleForm({ mode, articleId, initialValues }: ArticleFormProps
       </div>
 
       <div className="cms-admin-form-actions">
-        <button className="cms-admin-button cms-admin-button-primary" type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "保存中..." : mode === "create" ? "创建文章" : "保存修改"}
+        <button
+          className="cms-admin-button"
+          type="submit"
+          disabled={isSubmitting}
+          onClick={() => setSubmitIntent("save")}
+        >
+          {isSubmitting && submitIntent === "save" ? "保存中..." : "保存草稿"}
+        </button>
+        <button
+          className="cms-admin-button cms-admin-button-primary"
+          type="submit"
+          disabled={isSubmitting}
+          onClick={() => setSubmitIntent("preview")}
+        >
+          {isSubmitting && submitIntent === "preview" ? "保存中..." : "保存并预览"}
         </button>
       </div>
     </form>

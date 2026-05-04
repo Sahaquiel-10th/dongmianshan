@@ -99,7 +99,6 @@ export function ArticleList({ articles }: ArticleListProps) {
               <th>标题</th>
               <th>分类</th>
               <th>状态</th>
-              <th>删除状态</th>
               <th>更新时间</th>
               <th>操作</th>
             </tr>
@@ -109,8 +108,7 @@ export function ArticleList({ articles }: ArticleListProps) {
               <tr key={article.id}>
                 <td>{article.title}</td>
                 <td>{getArticleCategoryLabel(article.category)}</td>
-                <td>{article.status === "published" ? "已发布" : "草稿"}</td>
-                <td>{article.deletedAt ? "已删除，可恢复" : "正常"}</td>
+                <td>{article.deletedAt ? "已删除，可恢复" : article.status === "published" ? "已发布" : "草稿"}</td>
                 <td>{new Date(article.updatedAt).toLocaleString("zh-CN")}</td>
                 <td>
                   <div className="cms-admin-row-actions">
@@ -125,6 +123,9 @@ export function ArticleList({ articles }: ArticleListProps) {
                       </button>
                     ) : (
                       <>
+                        <Link className="cms-admin-button" href={`/admin/articles/${article.id}/preview`}>
+                          预览
+                        </Link>
                         <Link className="cms-admin-button" href={`/admin/articles/${article.id}/edit`}>
                           编辑
                         </Link>

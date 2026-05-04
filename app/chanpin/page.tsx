@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getPublishedProducts } from "@/lib/products";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "产品一览 - 东面山",
   description: "查看东面山洁面慕斯、精华水、精华乳三步护肤产品。",

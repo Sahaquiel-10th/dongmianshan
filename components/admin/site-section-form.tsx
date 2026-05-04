@@ -52,6 +52,7 @@ export function SiteSectionForm({ section, label, hint, itemLabel }: SiteSection
   });
   const [items, setItems] = useState<EditableItem[]>(toEditableItems(section));
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   function updateField(field: keyof typeof values, value: string) {
@@ -85,6 +86,7 @@ export function SiteSectionForm({ section, label, hint, itemLabel }: SiteSection
     event.preventDefault();
     setIsSubmitting(true);
     setErrorMessage(null);
+    setSuccessMessage(null);
 
     try {
       const response = await fetch(`/api/site-sections/${section.key}`, {
@@ -103,6 +105,7 @@ export function SiteSectionForm({ section, label, hint, itemLabel }: SiteSection
         throw new Error(data.error ?? "保存板块失败。");
       }
 
+      setSuccessMessage("已保存。前台页面会读取最新发布内容。");
       router.refresh();
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "保存板块失败。");
@@ -114,6 +117,7 @@ export function SiteSectionForm({ section, label, hint, itemLabel }: SiteSection
   return (
     <form className="cms-admin-form cms-admin-form-panel" onSubmit={handleSubmit}>
       {errorMessage ? <p className="cms-admin-alert cms-admin-alert-error">{errorMessage}</p> : null}
+      {successMessage ? <p className="cms-admin-alert cms-admin-alert-success">{successMessage}</p> : null}
       <p className="cms-admin-alert cms-admin-alert-info">{hint}</p>
 
       <div className="cms-admin-form-grid">

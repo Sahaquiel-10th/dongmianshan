@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { getPublishedSiteSection } from "@/lib/site-sections";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "肌肤测试 - 东面山",
   description: "东面山熟龄男士肌肤测试占位页面，后续可接入问卷和产品推荐逻辑。",

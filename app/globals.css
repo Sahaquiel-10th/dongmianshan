@@ -743,6 +743,11 @@ img {
   color: #b91c1c;
 }
 
+.cms-admin-alert-success {
+  background: rgba(22, 163, 74, 0.1);
+  color: #15803d;
+}
+
 .cms-admin-alert a {
   text-decoration: underline;
   font-weight: 700;
@@ -776,6 +781,12 @@ img {
 
 .cms-admin-preview-header .cms-content-cover-frame {
   margin-top: 18px;
+}
+
+.cms-admin-preview-actions {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 18px;
 }
 
 .cms-admin-command-box {

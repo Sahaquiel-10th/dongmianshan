@@ -43,14 +43,6 @@ export default function AdminDashboardPage() {
             编辑官网板块
           </Link>
         </article>
-
-        <article className="cms-admin-card">
-          <h3>数据库检查</h3>
-          <p>检查线上 MySQL 是否已同步后台所需表和字段。</p>
-          <Link className="cms-admin-button" href="/admin/setup">
-            查看同步状态
-          </Link>
-        </article>
       </div>
     </section>
   );

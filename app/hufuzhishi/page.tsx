@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { ARTICLE_CATEGORIES } from "@/lib/categories";
 import { getPublishedSiteSection } from "@/lib/site-sections";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "教育 - 东面山内容中心",
   description: "东面山护肤知识入口，聚合科普、评测、教程、FAQ 和案例内容。",
