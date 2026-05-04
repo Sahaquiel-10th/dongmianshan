@@ -46,12 +46,16 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
   const [values, setValues] = useState(initialValues ?? DEFAULT_VALUES);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [wasSaved, setWasSaved] = useState(false);
 
   function updateField<K extends keyof ProductValues>(field: K, value: ProductValues[K]) {
     setValues((current) => ({
       ...current,
       [field]: value,
     }));
+    setHasUnsavedChanges(true);
+    setWasSaved(false);
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -73,8 +77,13 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
         throw new Error(data.error ?? "保存产品失败。");
       }
 
-      router.push("/admin/products");
-      router.refresh();
+      setHasUnsavedChanges(false);
+      setWasSaved(true);
+      if (mode === "create") {
+        router.push("/admin/products");
+      } else {
+        router.refresh();
+      }
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "保存产品失败。");
     } finally {
@@ -148,8 +157,12 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
       </div>
 
       <div className="cms-admin-form-actions">
-        <button className="cms-admin-button cms-admin-button-primary" type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "保存中..." : "保存产品"}
+        <button
+          className="cms-admin-button cms-admin-button-primary"
+          type="submit"
+          disabled={isSubmitting || (!hasUnsavedChanges && wasSaved)}
+        >
+          {isSubmitting ? "保存中..." : !hasUnsavedChanges && wasSaved ? "保存成功" : "保存产品"}
         </button>
       </div>
     </form>

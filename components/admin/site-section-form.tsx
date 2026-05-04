@@ -54,15 +54,23 @@ export function SiteSectionForm({ section, label, hint, itemLabel }: SiteSection
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [wasSaved, setWasSaved] = useState(false);
 
   function updateField(field: keyof typeof values, value: string) {
     setValues((current) => ({ ...current, [field]: value }));
+    setHasUnsavedChanges(true);
+    setWasSaved(false);
+    setSuccessMessage(null);
   }
 
   function updateItem(index: number, field: keyof EditableItem, value: string | null) {
     setItems((current) =>
       current.map((item, itemIndex) => (itemIndex === index ? { ...item, [field]: value } : item)),
     );
+    setHasUnsavedChanges(true);
+    setWasSaved(false);
+    setSuccessMessage(null);
   }
 
   function addItem() {
@@ -80,6 +88,9 @@ export function SiteSectionForm({ section, label, hint, itemLabel }: SiteSection
         deletedAt: null,
       },
     ]);
+    setHasUnsavedChanges(true);
+    setWasSaved(false);
+    setSuccessMessage(null);
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -106,6 +117,8 @@ export function SiteSectionForm({ section, label, hint, itemLabel }: SiteSection
       }
 
       setSuccessMessage("已保存。前台页面会读取最新发布内容。");
+      setHasUnsavedChanges(false);
+      setWasSaved(true);
       router.refresh();
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "保存板块失败。");
@@ -222,8 +235,12 @@ export function SiteSectionForm({ section, label, hint, itemLabel }: SiteSection
       </div>
 
       <div className="cms-admin-form-actions">
-        <button className="cms-admin-button cms-admin-button-primary" type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "保存中..." : "保存板块"}
+        <button
+          className="cms-admin-button cms-admin-button-primary"
+          type="submit"
+          disabled={isSubmitting || (!hasUnsavedChanges && wasSaved)}
+        >
+          {isSubmitting ? "保存中..." : !hasUnsavedChanges && wasSaved ? "保存成功" : "保存板块"}
         </button>
       </div>
     </form>

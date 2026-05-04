@@ -50,6 +50,8 @@ export function ArticleForm({ mode, articleId, initialValues }: ArticleFormProps
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [submitIntent, setSubmitIntent] = useState<"save" | "preview">("save");
+  const [lastSavedIntent, setLastSavedIntent] = useState<"save" | "preview" | null>(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const previewUrl =
     values.category && values.slug && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(values.slug)
       ? `/${values.category}/${values.slug}`
@@ -61,6 +63,8 @@ export function ArticleForm({ mode, articleId, initialValues }: ArticleFormProps
       ...current,
       [field]: value,
     }));
+    setHasUnsavedChanges(true);
+    setLastSavedIntent(null);
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -89,15 +93,16 @@ export function ArticleForm({ mode, articleId, initialValues }: ArticleFormProps
       }
 
       const savedArticleId = mode === "create" ? data.item?.id : articleId;
+      setHasUnsavedChanges(false);
+      setLastSavedIntent(submitIntent);
 
       if (submitIntent === "preview" && savedArticleId) {
         router.push(`/admin/articles/${savedArticleId}/preview`);
-      } else if (savedArticleId) {
-        router.push(`/admin/articles/${savedArticleId}/edit`);
+      } else if (mode === "create" && savedArticleId) {
+        router.replace(`/admin/articles/${savedArticleId}/edit`);
       } else {
-        router.push("/admin/articles");
+        router.refresh();
       }
-      router.refresh();
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "保存文章失败。");
     } finally {
@@ -222,18 +227,26 @@ export function ArticleForm({ mode, articleId, initialValues }: ArticleFormProps
         <button
           className="cms-admin-button"
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || (!hasUnsavedChanges && lastSavedIntent === "save")}
           onClick={() => setSubmitIntent("save")}
         >
-          {isSubmitting && submitIntent === "save" ? "保存中..." : "保存草稿"}
+          {isSubmitting && submitIntent === "save"
+            ? "保存中..."
+            : !hasUnsavedChanges && lastSavedIntent === "save"
+              ? "保存成功"
+              : "保存草稿"}
         </button>
         <button
           className="cms-admin-button cms-admin-button-primary"
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || (!hasUnsavedChanges && lastSavedIntent === "preview")}
           onClick={() => setSubmitIntent("preview")}
         >
-          {isSubmitting && submitIntent === "preview" ? "保存中..." : "保存并预览"}
+          {isSubmitting && submitIntent === "preview"
+            ? "保存中..."
+            : !hasUnsavedChanges && lastSavedIntent === "preview"
+              ? "保存成功"
+              : "保存并预览"}
         </button>
       </div>
     </form>
