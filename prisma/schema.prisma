@@ -20,17 +20,17 @@ enum PublishStatus {
 
 model Article {
   id             String   @id @default(cuid())
-  title          String
-  slug           String   @unique
-  summary        String?
-  content        String
-  coverImage     String?
-  category       String
-  tags           String?
-  seoTitle       String?
-  seoDescription String?
+  title          String   @db.VarChar(200)
+  slug           String   @unique @db.VarChar(200)
+  summary        String?  @db.Text
+  content        String   @db.LongText
+  coverImage     String?  @db.VarChar(2048)
+  category       String   @db.VarChar(80)
+  tags           String?  @db.Text
+  seoTitle       String?  @db.VarChar(200)
+  seoDescription String?  @db.Text
   status         ArticleStatus @default(draft)
-  author         String?
+  author         String?  @db.VarChar(100)
   publishedAt    DateTime?
   deletedAt      DateTime?
   createdAt      DateTime @default(now())
@@ -44,17 +44,17 @@ model Article {
 
 model Product {
   id             String        @id @default(cuid())
-  name           String
-  slug           String        @unique
-  subtitle       String?
+  name           String        @db.VarChar(200)
+  slug           String        @unique @db.VarChar(200)
+  subtitle       String?       @db.VarChar(200)
   summary        String?       @db.Text
-  routineStep    String?
-  coverImage     String?
-  shopUrl        String?
+  routineStep    String?       @db.VarChar(80)
+  coverImage     String?       @db.VarChar(2048)
+  shopUrl        String?       @db.VarChar(2048)
   benefits       Json?
   scenes         Json?
-  seoTitle       String?
-  seoDescription String?
+  seoTitle       String?       @db.VarChar(200)
+  seoDescription String?       @db.Text
   status         PublishStatus @default(draft)
   sortOrder      Int           @default(0)
   deletedAt      DateTime?
@@ -68,14 +68,14 @@ model Product {
 
 model SiteSection {
   id             String        @id @default(cuid())
-  key            String        @unique
-  title          String
-  eyebrow        String?
+  key            String        @unique @db.VarChar(80)
+  title          String        @db.VarChar(200)
+  eyebrow        String?       @db.VarChar(120)
   subtitle       String?       @db.Text
   body           String?       @db.Text
-  mediaUrl       String?
-  ctaLabel       String?
-  ctaUrl         String?
+  mediaUrl       String?       @db.VarChar(2048)
+  ctaLabel       String?       @db.VarChar(80)
+  ctaUrl         String?       @db.VarChar(2048)
   items          Json?
   status         PublishStatus @default(draft)
   sortOrder      Int           @default(0)
