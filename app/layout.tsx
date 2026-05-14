@@ -15,6 +15,9 @@ export const metadata: Metadata = {
     url: "/",
     type: "website",
   },
+  other: {
+    "baidu-site-verification": "codeva-cOn6PU7kRG",
+  },
 };
 
 export default function RootLayout({
