@@ -42,7 +42,7 @@ export default async function AdminSectionPage({ params }: AdminSectionPageProps
           <p>{config.hint}</p>
         </div>
         <Link className="cms-admin-button" href="/admin/sections">
-          返回板块列表
+          返回上一级页面
         </Link>
       </div>
 

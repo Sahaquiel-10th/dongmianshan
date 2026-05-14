@@ -93,6 +93,11 @@ export function ProductList({ products }: { products: ProductListItem[] }) {
                         <Link className="cms-admin-button" href={`/admin/products/${product.id}/edit`}>
                           编辑
                         </Link>
+                        {product.status === "published" ? (
+                          <Link className="cms-admin-button" href={`/chanpin/${product.slug}`} target="_blank">
+                            查看前台
+                          </Link>
+                        ) : null}
                         <button
                           className="cms-admin-button cms-admin-button-danger"
                           type="button"

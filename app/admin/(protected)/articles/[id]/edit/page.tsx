@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { ArticleForm } from "@/components/admin/article-form";
-import { formatDateTimeLocal } from "@/lib/articles";
+import { formatDateTimeLocal, serializeRelatedArticleIds } from "@/lib/articles";
 import { prisma } from "@/lib/prisma";
 
 type EditArticlePageProps = {
@@ -23,18 +24,22 @@ export default async function EditArticlePage({ params }: EditArticlePageProps) 
 
   return (
     <section className="cms-admin-panel">
-      <div className="cms-admin-panel-header">
+      <div className="cms-admin-panel-header cms-admin-panel-header-row">
         <div>
           <p className="cms-admin-eyebrow">Edit</p>
           <h2>编辑文章</h2>
           <p>修改文章内容和基础 SEO 字段。</p>
         </div>
+        <Link className="cms-admin-button" href="/admin/articles">
+          返回上一级页面
+        </Link>
       </div>
 
       <ArticleForm
         mode="edit"
         articleId={article.id}
         initialValues={{
+          code: article.code ?? "",
           title: article.title,
           slug: article.slug,
           summary: article.summary ?? "",
@@ -44,6 +49,7 @@ export default async function EditArticlePage({ params }: EditArticlePageProps) 
           content: article.content,
           seoTitle: article.seoTitle ?? "",
           seoDescription: article.seoDescription ?? "",
+          relatedArticleIds: serializeRelatedArticleIds(article.relatedArticleIds),
           status: article.status,
           author: article.author ?? "",
           publishedAt: formatDateTimeLocal(article.publishedAt),

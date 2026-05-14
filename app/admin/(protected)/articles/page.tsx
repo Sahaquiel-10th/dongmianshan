@@ -6,6 +6,7 @@ export default async function AdminArticlesPage() {
   let setupError: string | null = null;
   let articles: {
     id: string;
+    code: string | null;
     title: string;
     category: string;
     status: string;
@@ -15,11 +16,15 @@ export default async function AdminArticlesPage() {
 
   try {
     articles = await prisma.article.findMany({
+      where: {
+        deletedAt: null,
+      },
       orderBy: {
         updatedAt: "desc",
       },
       select: {
         id: true,
+        code: true,
         title: true,
         category: true,
         status: true,
@@ -44,9 +49,10 @@ export default async function AdminArticlesPage() {
 
       articles = legacyArticles.map((article) => ({
         ...article,
+        code: null,
         deletedAt: null,
       }));
-      setupError = "数据库还没有同步 deletedAt 字段，文章可查看，但删除恢复功能需要先执行 npm run prisma:push。";
+      setupError = "数据库还没有同步文章编号或 deletedAt 字段，文章可查看，但完整功能需要先执行 npm run prisma:push。";
     } catch {
       setupError = "文章表暂时无法读取，请检查数据库连接和 Prisma 表结构。";
     }

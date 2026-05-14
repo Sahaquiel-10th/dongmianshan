@@ -7,6 +7,7 @@ import { getArticleCategoryLabel } from "@/lib/categories";
 
 type ArticleListItem = {
   id: string;
+  code: string | null;
   title: string;
   category: string;
   status: string;
@@ -21,11 +22,10 @@ type ArticleListProps = {
 export function ArticleList({ articles }: ArticleListProps) {
   const router = useRouter();
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [restoringId, setRestoringId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   async function handleDelete(id: string) {
-    const confirmed = window.confirm("确定要删除这篇文章吗？15 天内可一键恢复。");
+    const confirmed = window.confirm("确定要把这篇文章移入回收站吗？");
 
     if (!confirmed) {
       return;
@@ -53,33 +53,14 @@ export function ArticleList({ articles }: ArticleListProps) {
     }
   }
 
-  async function handleRestore(id: string) {
-    setRestoringId(id);
-    setErrorMessage(null);
-
-    try {
-      const response = await fetch(`/api/articles/${id}`, {
-        method: "PATCH",
-      });
-      const data = (await response.json()) as { error?: string };
-
-      if (!response.ok) {
-        throw new Error(data.error ?? "恢复文章失败。");
-      }
-
-      router.refresh();
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "恢复文章失败。");
-    } finally {
-      setRestoringId(null);
-    }
-  }
-
   return (
     <div className="cms-admin-table-wrap">
       <div className="cms-admin-table-toolbar">
         <Link className="cms-admin-button cms-admin-button-primary" href="/admin/articles/new">
           新建文章
+        </Link>
+        <Link className="cms-admin-button" href="/admin/articles/trash">
+          回收站
         </Link>
       </div>
 
@@ -96,6 +77,7 @@ export function ArticleList({ articles }: ArticleListProps) {
         <table className="cms-admin-table">
           <thead>
             <tr>
+              <th>编号</th>
               <th>标题</th>
               <th>分类</th>
               <th>状态</th>
@@ -106,39 +88,27 @@ export function ArticleList({ articles }: ArticleListProps) {
           <tbody>
             {articles.map((article) => (
               <tr key={article.id}>
+                <td>{article.code ?? "-"}</td>
                 <td>{article.title}</td>
                 <td>{getArticleCategoryLabel(article.category)}</td>
-                <td>{article.deletedAt ? "已删除，可恢复" : article.status === "published" ? "已发布" : "草稿"}</td>
+                <td>{article.status === "published" ? "已发布" : "草稿"}</td>
                 <td>{new Date(article.updatedAt).toLocaleString("zh-CN")}</td>
                 <td>
                   <div className="cms-admin-row-actions">
-                    {article.deletedAt ? (
-                      <button
-                        className="cms-admin-button cms-admin-button-primary"
-                        type="button"
-                        onClick={() => handleRestore(article.id)}
-                        disabled={restoringId === article.id}
-                      >
-                        {restoringId === article.id ? "恢复中..." : "恢复"}
-                      </button>
-                    ) : (
-                      <>
-                        <Link className="cms-admin-button" href={`/admin/articles/${article.id}/preview`}>
-                          预览
-                        </Link>
-                        <Link className="cms-admin-button" href={`/admin/articles/${article.id}/edit`}>
-                          编辑
-                        </Link>
-                        <button
-                          className="cms-admin-button cms-admin-button-danger"
-                          type="button"
-                          onClick={() => handleDelete(article.id)}
-                          disabled={deletingId === article.id}
-                        >
-                          {deletingId === article.id ? "删除中..." : "删除"}
-                        </button>
-                      </>
-                    )}
+                    <Link className="cms-admin-button" href={`/admin/articles/${article.id}/preview`}>
+                      预览
+                    </Link>
+                    <Link className="cms-admin-button" href={`/admin/articles/${article.id}/edit`}>
+                      编辑
+                    </Link>
+                    <button
+                      className="cms-admin-button cms-admin-button-danger"
+                      type="button"
+                      onClick={() => handleDelete(article.id)}
+                      disabled={deletingId === article.id}
+                    >
+                      {deletingId === article.id ? "移入中..." : "移入回收站"}
+                    </button>
                   </div>
                 </td>
               </tr>

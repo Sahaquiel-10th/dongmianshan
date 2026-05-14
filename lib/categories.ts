@@ -1,4 +1,5 @@
 export const ARTICLE_CATEGORIES = [
+  { slug: "brand", label: "品牌" },
   { slug: "science", label: "科普" },
   { slug: "review", label: "评测" },
   { slug: "tutorial", label: "教程" },
@@ -9,6 +10,7 @@ export const ARTICLE_CATEGORIES = [
 export type ArticleCategorySlug = (typeof ARTICLE_CATEGORIES)[number]["slug"];
 
 export const ARTICLE_CATEGORY_SLUGS = [
+  "brand",
   "science",
   "review",
   "tutorial",

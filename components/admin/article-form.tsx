@@ -8,6 +8,7 @@ import { ARTICLE_CATEGORIES } from "@/lib/categories";
 type ArticleFormMode = "create" | "edit";
 
 type ArticleFormValues = {
+  code: string;
   title: string;
   slug: string;
   summary: string;
@@ -17,6 +18,7 @@ type ArticleFormValues = {
   content: string;
   seoTitle: string;
   seoDescription: string;
+  relatedArticleIds: string;
   status: string;
   author: string;
   publishedAt: string;
@@ -29,6 +31,7 @@ type ArticleFormProps = {
 };
 
 const DEFAULT_VALUES: ArticleFormValues = {
+  code: "",
   title: "",
   slug: "",
   summary: "",
@@ -38,6 +41,7 @@ const DEFAULT_VALUES: ArticleFormValues = {
   content: "",
   seoTitle: "",
   seoDescription: "",
+  relatedArticleIds: "",
   status: "draft",
   author: "",
   publishedAt: "",
@@ -75,6 +79,7 @@ export function ArticleForm({ mode, articleId, initialValues }: ArticleFormProps
     try {
       const payload = {
         ...values,
+        relatedArticleIds: values.relatedArticleIds,
         status: mode === "create" ? "draft" : values.status,
         publishedAt: values.publishedAt || null,
       };
@@ -113,17 +118,39 @@ export function ArticleForm({ mode, articleId, initialValues }: ArticleFormProps
   return (
     <form className="cms-admin-form cms-admin-form-panel" onSubmit={handleSubmit}>
       {errorMessage ? <p className="cms-admin-alert cms-admin-alert-error">{errorMessage}</p> : null}
+      {!hasUnsavedChanges && lastSavedIntent === "save" ? (
+        <p className="cms-admin-toast cms-admin-toast-success">{mode === "create" ? "草稿创建成功。" : "修改已保存。"}</p>
+      ) : null}
 
-      <div className="cms-admin-form-actions cms-admin-form-actions-between">
+      <div className="cms-admin-form-actions cms-admin-form-actions-between cms-admin-sticky-actions">
         <div className="cms-admin-form-actions">
           <button className="cms-admin-button" type="button" onClick={() => setIsPreviewOpen((current) => !current)}>
-            {isPreviewOpen ? "收起预览" : "预览文章"}
+            {isPreviewOpen ? "收起当前预览" : "预览当前输入"}
           </button>
-          {previewUrl ? (
-            <a className="cms-admin-button" href={previewUrl} target="_blank" rel="noreferrer">
-              打开前台页面
-            </a>
-          ) : null}
+          <button
+            className="cms-admin-button"
+            type="submit"
+            disabled={isSubmitting || (!hasUnsavedChanges && lastSavedIntent === "save")}
+            onClick={() => setSubmitIntent("save")}
+          >
+            {isSubmitting && submitIntent === "save"
+              ? "保存中..."
+              : !hasUnsavedChanges && lastSavedIntent === "save"
+                ? "保存成功"
+                : "保存草稿"}
+          </button>
+          <button
+            className="cms-admin-button cms-admin-button-primary"
+            type="submit"
+            disabled={isSubmitting || (!hasUnsavedChanges && lastSavedIntent === "preview")}
+            onClick={() => setSubmitIntent("preview")}
+          >
+            {isSubmitting && submitIntent === "preview"
+              ? "保存中..."
+              : !hasUnsavedChanges && lastSavedIntent === "preview"
+                ? "保存成功"
+                : "保存并预览/发布"}
+          </button>
         </div>
         <p className="cms-admin-inline-hint">
           当前状态：{values.status === "published" ? "已发布" : "草稿"}。草稿不会在前台公开显示，请保存后进入预览页发布。
@@ -147,6 +174,15 @@ export function ArticleForm({ mode, articleId, initialValues }: ArticleFormProps
       ) : null}
 
       <div className="cms-admin-form-grid">
+        <label className="cms-admin-field">
+          <span>文章编号</span>
+          <input
+            value={values.code}
+            onChange={(event) => updateField("code", event.target.value)}
+            placeholder="留空时新建文章自动分配"
+          />
+        </label>
+
         <label className="cms-admin-field">
           <span>标题</span>
           <input value={values.title} onChange={(event) => updateField("title", event.target.value)} required />
@@ -173,6 +209,16 @@ export function ArticleForm({ mode, articleId, initialValues }: ArticleFormProps
         <label className="cms-admin-field cms-admin-field-full">
           <span>摘要</span>
           <textarea value={values.summary} onChange={(event) => updateField("summary", event.target.value)} rows={3} />
+        </label>
+
+        <label className="cms-admin-field cms-admin-field-full">
+          <span>相关内容</span>
+          <textarea
+            value={values.relatedArticleIds}
+            onChange={(event) => updateField("relatedArticleIds", event.target.value)}
+            rows={4}
+            placeholder="可选。每行填写一篇相关文章 ID，最多 5 篇；留空时前台会自动推荐同分类文章。"
+          />
         </label>
 
         <label className="cms-admin-field">
@@ -223,32 +269,11 @@ export function ArticleForm({ mode, articleId, initialValues }: ArticleFormProps
         </label>
       </div>
 
-      <div className="cms-admin-form-actions">
-        <button
-          className="cms-admin-button"
-          type="submit"
-          disabled={isSubmitting || (!hasUnsavedChanges && lastSavedIntent === "save")}
-          onClick={() => setSubmitIntent("save")}
-        >
-          {isSubmitting && submitIntent === "save"
-            ? "保存中..."
-            : !hasUnsavedChanges && lastSavedIntent === "save"
-              ? "保存成功"
-              : "保存草稿"}
-        </button>
-        <button
-          className="cms-admin-button cms-admin-button-primary"
-          type="submit"
-          disabled={isSubmitting || (!hasUnsavedChanges && lastSavedIntent === "preview")}
-          onClick={() => setSubmitIntent("preview")}
-        >
-          {isSubmitting && submitIntent === "preview"
-            ? "保存中..."
-            : !hasUnsavedChanges && lastSavedIntent === "preview"
-              ? "保存成功"
-              : "保存并预览"}
-        </button>
-      </div>
+      {previewUrl ? (
+        <a className="cms-admin-button" href={previewUrl} target="_blank" rel="noreferrer">
+          打开前台页面
+        </a>
+      ) : null}
     </form>
   );
 }

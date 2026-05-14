@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
-import { normalizeArticleInput } from "@/lib/articles";
+import { getNextArticleCode, normalizeArticleInput } from "@/lib/articles";
 import { CmsAuthError, requireAdminApiUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -27,7 +27,7 @@ function handleArticleError(error: unknown) {
   if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
     return NextResponse.json(
       {
-        error: "Slug 已存在，请更换后重试。",
+        error: "Slug 或文章编号已存在，请更换后重试。",
       },
       { status: 409 },
     );
@@ -78,7 +78,10 @@ export async function POST(request: Request) {
 
     const payload = normalizeArticleInput(await request.json());
     const article = await prisma.article.create({
-      data: payload,
+      data: {
+        ...payload,
+        code: payload.code ?? (await getNextArticleCode()),
+      },
     });
 
     return NextResponse.json(

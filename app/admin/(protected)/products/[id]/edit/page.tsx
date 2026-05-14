@@ -43,14 +43,14 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
 
   return (
     <section className="cms-admin-panel">
-      <div className="cms-admin-panel-header">
+      <div className="cms-admin-panel-header cms-admin-panel-header-row">
         <div>
           <p className="cms-admin-eyebrow">Products</p>
           <h2>编辑产品</h2>
           <p>修改后前台会读取最新发布内容。</p>
         </div>
         <Link className="cms-admin-button" href="/admin/products">
-          返回产品列表
+          返回上一级页面
         </Link>
       </div>
 

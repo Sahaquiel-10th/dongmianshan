@@ -20,6 +20,7 @@ enum PublishStatus {
 
 model Article {
   id             String   @id @default(cuid())
+  code           String?  @unique @db.VarChar(40)
   title          String   @db.VarChar(200)
   slug           String   @unique @db.VarChar(200)
   summary        String?  @db.Text
@@ -29,6 +30,7 @@ model Article {
   tags           String?  @db.Text
   seoTitle       String?  @db.VarChar(200)
   seoDescription String?  @db.Text
+  relatedArticleIds Json?
   status         ArticleStatus @default(draft)
   author         String?  @db.VarChar(100)
   publishedAt    DateTime?
@@ -37,6 +39,7 @@ model Article {
   updatedAt      DateTime @updatedAt
 
   @@index([category])
+  @@index([code])
   @@index([status])
   @@index([deletedAt])
   @@index([updatedAt])

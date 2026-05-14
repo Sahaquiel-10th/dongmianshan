@@ -11,7 +11,7 @@ export default function NewProductPage() {
           <p>新增后设置为发布状态，即可显示在官网产品区。</p>
         </div>
         <Link className="cms-admin-button" href="/admin/products">
-          返回产品列表
+          返回上一级页面
         </Link>
       </div>
 

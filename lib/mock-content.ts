@@ -16,6 +16,7 @@ function createMockArticle(input: {
 }): Article {
   return {
     id: input.id,
+    code: input.id.replace(/^mock-/, "").toUpperCase(),
     title: input.title,
     slug: input.slug,
     summary: input.summary,
@@ -25,6 +26,7 @@ function createMockArticle(input: {
     tags: input.tags ?? null,
     seoTitle: input.seoTitle ?? null,
     seoDescription: input.seoDescription ?? null,
+    relatedArticleIds: [],
     status: "published" as ArticleStatus,
     author: "东面山内容编辑部",
     publishedAt: now,

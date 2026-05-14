@@ -3,6 +3,7 @@ import {
   navItems,
   topLinks,
 } from "@/lib/homepage";
+import { getLatestPublishedArticles } from "@/lib/articles";
 import { getPublishedProducts } from "@/lib/products";
 import { getPublishedSiteSection } from "@/lib/site-sections";
 
@@ -13,9 +14,7 @@ function SiteHeader() {
     <header className="site-header">
       <div className="utility-bar">
         <div className="site-container utility-inner">
-          <Link className="admin-link" href="/admin/login">
-            员工登录
-          </Link>
+          <span className="site-claim">东方熟龄肌男士护肤品牌开创者</span>
           <nav aria-label="辅助导航">
             {topLinks.map((link) => (
               <Link key={link.href} href={link.href}>
@@ -28,7 +27,7 @@ function SiteHeader() {
       <div className="site-container main-nav">
         <Link className="brand-mark" href="/">
           <span>东面山</span>
-          <small>东方熟龄肌男士护肤</small>
+          <small>东方熟龄肌男士护肤品牌开创者</small>
         </Link>
         <nav className="primary-nav" aria-label="主导航">
           {navItems.map((item) => (
@@ -52,12 +51,13 @@ function SiteHeader() {
 }
 
 export default async function Page() {
-  const [products, hero, scenes, science, testimonials] = await Promise.all([
+  const [products, hero, scenes, science, testimonials, latestArticles] = await Promise.all([
     getPublishedProducts(),
     getPublishedSiteSection("homepage-hero"),
     getPublishedSiteSection("mens-scenes"),
     getPublishedSiteSection("skin-science"),
     getPublishedSiteSection("testimonials"),
+    getLatestPublishedArticles(4),
   ]);
   const heroSlides =
     hero.items.length > 0
@@ -149,6 +149,11 @@ export default async function Page() {
             <h2>洁面、补水、修护，三件事讲清楚</h2>
           </div>
           <div className="product-overview-grid">
+            {products.length === 0 ? (
+              <div className="cms-content-empty">
+                <p>产品一览暂无已发布内容，请在员工后台补充并发布产品。</p>
+              </div>
+            ) : null}
             {products.map((product) => (
               <article className="product-overview-card" key={product.slug}>
                 <img src={product.image} alt={`${product.shortName}占位图`} />
@@ -161,6 +166,30 @@ export default async function Page() {
               </article>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="site-section latest-articles-band">
+        <div className="site-container">
+          <div className="section-heading">
+            <p className="site-eyebrow">最新文章</p>
+            <h2>最近更新的护肤内容</h2>
+          </div>
+          {latestArticles.length === 0 ? (
+            <div className="cms-content-empty">
+              <p>暂无已发布文章。</p>
+            </div>
+          ) : (
+            <div className="latest-article-grid">
+              {latestArticles.map((article) => (
+                <Link className="latest-article-card" key={article.id} href={`/${article.category}/${article.slug}`}>
+                  <span>{article.code ?? "文章"}</span>
+                  <strong>{article.title}</strong>
+                  {article.summary ? <p>{article.summary}</p> : null}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -214,6 +243,7 @@ export default async function Page() {
             <Link href="/hufuzhishi">教育</Link>
             <Link href="/guanyudongmianshan">关于东面山</Link>
             <Link href="/jifuceping">肌肤测试</Link>
+            <Link href="/admin/login">登录</Link>
           </nav>
         </div>
       </footer>

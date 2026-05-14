@@ -30,6 +30,9 @@ export default async function AdminProtectedLayout({
           <Link className="cms-admin-button" href="/admin/articles">
             文章管理
           </Link>
+          <Link className="cms-admin-button" href="/admin/articles/trash">
+            回收站
+          </Link>
           <Link className="cms-admin-button" href="/admin/products">
             产品一览
           </Link>

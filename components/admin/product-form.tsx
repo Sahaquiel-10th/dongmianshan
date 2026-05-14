@@ -37,7 +37,7 @@ const DEFAULT_VALUES: ProductValues = {
   scenes: "",
   seoTitle: "",
   seoDescription: "",
-  status: "draft",
+  status: "published",
   sortOrder: "0",
 };
 
@@ -94,8 +94,9 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
   return (
     <form className="cms-admin-form cms-admin-form-panel" onSubmit={handleSubmit}>
       {errorMessage ? <p className="cms-admin-alert cms-admin-alert-error">{errorMessage}</p> : null}
+      {wasSaved ? <p className="cms-admin-toast cms-admin-toast-success">产品已保存，发布状态下会同步显示到官网产品区。</p> : null}
       <p className="cms-admin-alert cms-admin-alert-info">
-        图片填写 URL，建议产品图 1200x900；简介 180 字以内；功效和场景用逗号或换行分隔，最多 8 项。
+        图片填写 URL，建议产品图 1200x900；简介 180 字以内；新建产品默认发布，功效和场景用逗号或换行分隔，最多 8 项。
       </p>
 
       <div className="cms-admin-form-grid">

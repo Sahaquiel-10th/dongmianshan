@@ -35,7 +35,7 @@ function handleArticleError(error: unknown) {
   if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
     return NextResponse.json(
       {
-        error: "Slug 已存在，请更换后重试。",
+        error: "Slug 或文章编号已存在，请更换后重试。",
       },
       { status: 409 },
     );

@@ -35,8 +35,8 @@ export default async function PreviewArticlePage({ params }: PreviewArticlePageP
           <h2>文章预览</h2>
           <p>{article.status === "published" ? "这篇文章已发布，前台可访问。" : "确认内容无误后发布，或返回编辑继续修改。"}</p>
         </div>
-        <Link className="cms-admin-button" href="/admin/articles">
-          返回文章列表
+        <Link className="cms-admin-button" href={`/admin/articles/${article.id}/edit`}>
+          返回上一级页面
         </Link>
       </div>
 
@@ -53,6 +53,7 @@ export default async function PreviewArticlePage({ params }: PreviewArticlePageP
           <h1>{article.title}</h1>
           {article.summary ? <p className="cms-content-lead">{article.summary}</p> : null}
           <div className="cms-content-article-meta">
+            {article.code ? <span>编号：{article.code}</span> : null}
             <span>状态：{article.status === "published" ? "已发布" : "草稿"}</span>
             {article.author ? <span>作者：{article.author}</span> : null}
             {article.publishedAt ? <span>发布时间：{formatArticleDate(article.publishedAt)}</span> : null}

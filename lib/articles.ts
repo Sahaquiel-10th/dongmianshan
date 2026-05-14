@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { Prisma } from "@prisma/client";
 import { marked } from "marked";
 import sanitizeHtml from "sanitize-html";
 import { notFound } from "next/navigation";
@@ -47,6 +48,7 @@ const optionalNullableDate = z.preprocess((value) => {
 }, z.date().nullable().optional());
 
 export const articleInputSchema = z.object({
+  code: optionalTrimmedString,
   title: z.string().trim().min(1, "标题不能为空").max(200, "标题不能超过 200 个字符"),
   slug: z
     .string()
@@ -63,6 +65,20 @@ export const articleInputSchema = z.object({
   tags: optionalTrimmedString,
   seoTitle: optionalTrimmedString,
   seoDescription: optionalTrimmedString,
+  relatedArticleIds: z.preprocess((value) => {
+    if (Array.isArray(value)) {
+      return value.filter((item): item is string => typeof item === "string" && item.trim().length > 0);
+    }
+
+    if (typeof value === "string") {
+      return value
+        .split(/[\n,，]/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+    }
+
+    return [];
+  }, z.array(z.string().trim().min(1)).max(5, "相关内容最多指定 5 篇")).optional(),
   status: z.enum(ARTICLE_STATUS_VALUES, {
     error: "状态只能是 draft 或 published",
   }),
@@ -71,6 +87,24 @@ export const articleInputSchema = z.object({
 });
 
 export type ArticleInput = z.infer<typeof articleInputSchema>;
+
+export function formatArticleCode(sequence: number) {
+  return `A${sequence.toString().padStart(4, "0")}`;
+}
+
+export async function getNextArticleCode() {
+  const articles = await prisma.article.findMany({
+    select: {
+      code: true,
+    },
+  });
+  const maxCode = articles.reduce((max, article) => {
+    const matched = article.code?.match(/^A(\d+)$/i);
+    return matched ? Math.max(max, Number(matched[1])) : max;
+  }, 0);
+
+  return formatArticleCode(maxCode + 1);
+}
 
 export function normalizeArticleInput(input: unknown): ArticleInput {
   const parsed = articleInputSchema.parse(input);
@@ -113,6 +147,14 @@ export function parseArticleTags(tags: string | null | undefined) {
     .split(/[,，]/)
     .map((tag) => tag.trim())
     .filter(Boolean);
+}
+
+export function listFromJsonString(value: Prisma.JsonValue | null | undefined) {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
+}
+
+export function serializeRelatedArticleIds(value: Prisma.JsonValue | null | undefined) {
+  return listFromJsonString(value).join("\n");
 }
 
 marked.setOptions({
@@ -205,6 +247,21 @@ export async function getAllPublishedArticles() {
   });
 }
 
+export async function getLatestPublishedArticles(limit = 4) {
+  if (shouldUseMockContent()) {
+    return MOCK_PUBLISHED_ARTICLES.slice(0, limit);
+  }
+
+  return prisma.article.findMany({
+    where: {
+      status: "published",
+      deletedAt: null,
+    },
+    orderBy: [{ publishedAt: "desc" }, { updatedAt: "desc" }],
+    take: limit,
+  });
+}
+
 export async function getPublishedArticleBySlug(category: ArticleCategorySlug, slug: string) {
   if (shouldUseMockContent()) {
     return (
@@ -220,6 +277,95 @@ export async function getPublishedArticleBySlug(category: ArticleCategorySlug, s
       deletedAt: null,
     },
   });
+}
+
+export async function getRelatedArticles(article: {
+  id: string;
+  category: string;
+  tags: string | null;
+  relatedArticleIds?: Prisma.JsonValue | null;
+}) {
+  if (shouldUseMockContent()) {
+    return MOCK_PUBLISHED_ARTICLES.filter((item) => item.id !== article.id).slice(0, 4);
+  }
+
+  const selectedIds = listFromJsonString(article.relatedArticleIds).slice(0, 5);
+
+  if (selectedIds.length > 0) {
+    const selected = await prisma.article.findMany({
+      where: {
+        id: {
+          in: selectedIds,
+        },
+        status: "published",
+        deletedAt: null,
+      },
+    });
+    const byId = new Map(selected.map((item) => [item.id, item]));
+    return selectedIds
+      .map((id) => byId.get(id))
+      .filter((item): item is NonNullable<typeof item> => Boolean(item))
+      .slice(0, 5);
+  }
+
+  const tags = parseArticleTags(article.tags);
+  const sameCategory = await prisma.article.findMany({
+    where: {
+      id: {
+        not: article.id,
+      },
+      category: article.category,
+      status: "published",
+      deletedAt: null,
+    },
+    orderBy: [{ publishedAt: "desc" }, { updatedAt: "desc" }],
+    take: 8,
+  });
+
+  return sameCategory
+    .map((item) => ({
+      item,
+      score: parseArticleTags(item.tags).filter((tag) => tags.includes(tag)).length,
+    }))
+    .sort((a, b) => b.score - a.score)
+    .map(({ item }) => item)
+    .slice(0, 4);
+}
+
+export async function getAdjacentPublishedArticles(article: {
+  id: string;
+  publishedAt: Date | null;
+  updatedAt: Date;
+}) {
+  if (shouldUseMockContent()) {
+    const index = MOCK_PUBLISHED_ARTICLES.findIndex((item) => item.id === article.id);
+    return {
+      previous: index > 0 ? MOCK_PUBLISHED_ARTICLES[index - 1] : null,
+      next: index >= 0 && index < MOCK_PUBLISHED_ARTICLES.length - 1 ? MOCK_PUBLISHED_ARTICLES[index + 1] : null,
+    };
+  }
+
+  const articles = await prisma.article.findMany({
+    where: {
+      status: "published",
+      deletedAt: null,
+    },
+    orderBy: [{ publishedAt: "desc" }, { updatedAt: "desc" }],
+    select: {
+      id: true,
+      title: true,
+      category: true,
+      slug: true,
+      publishedAt: true,
+      updatedAt: true,
+    },
+  });
+  const index = articles.findIndex((item) => item.id === article.id);
+
+  return {
+    previous: index > 0 ? articles[index - 1] : null,
+    next: index >= 0 && index < articles.length - 1 ? articles[index + 1] : null,
+  };
 }
 
 export async function getPublishedArticleMetadata(
