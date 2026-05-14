@@ -1,18 +1,25 @@
 import type { MetadataRoute } from "next";
 import { ARTICLE_CATEGORIES } from "@/lib/categories";
 import { getAllPublishedArticles } from "@/lib/articles";
-import { products } from "@/lib/homepage";
+import { getPublishedProducts } from "@/lib/products";
 import { getAbsoluteUrl } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let articles: Awaited<ReturnType<typeof getAllPublishedArticles>> = [];
+  let products: Awaited<ReturnType<typeof getPublishedProducts>> = [];
 
   try {
     articles = await getAllPublishedArticles();
   } catch {
     articles = [];
+  }
+
+  try {
+    products = await getPublishedProducts();
+  } catch {
+    products = [];
   }
 
   const staticEntries: MetadataRoute.Sitemap = [

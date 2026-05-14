@@ -157,6 +157,14 @@ export function serializeRelatedArticleIds(value: Prisma.JsonValue | null | unde
   return listFromJsonString(value).join("\n");
 }
 
+function textExcerpt(value: string, maxLength = 150) {
+  return value
+    .replace(/[#>*_`[\]()|~-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, maxLength);
+}
+
 marked.setOptions({
   gfm: true,
   breaks: true,
@@ -378,15 +386,19 @@ export async function getPublishedArticleMetadata(
     return {};
   }
 
+  const description =
+    article.seoDescription ?? article.summary ?? textExcerpt(article.content) ?? `${article.title} - 东面山内容中心`;
+  const title = article.seoTitle ?? `${article.title} - 东面山内容中心`;
+
   return {
-    title: article.seoTitle ?? article.title,
-    description: article.seoDescription ?? article.summary ?? undefined,
+    title,
+    description,
     alternates: {
       canonical: `/${article.category}/${article.slug}`,
     },
     openGraph: {
-      title: article.seoTitle ?? article.title,
-      description: article.seoDescription ?? article.summary ?? undefined,
+      title,
+      description,
       url: getAbsoluteUrl(`/${article.category}/${article.slug}`),
       type: "article",
       images: article.coverImage ? [{ url: article.coverImage }] : undefined,
