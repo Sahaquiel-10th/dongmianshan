@@ -22,7 +22,6 @@
 
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
 }
 
 body {
@@ -33,7 +32,6 @@ body {
     radial-gradient(circle at top, rgba(255, 106, 57, 0.08), transparent 28%),
     linear-gradient(180deg, #fffaf6 0%, #ffffff 22%, #f7fafc 100%);
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
 }
 
 a {
@@ -44,21 +42,6 @@ a {
 img {
   display: block;
   max-width: 100%;
-}
-
-p,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-a,
-span,
-strong,
-td,
-th {
-  overflow-wrap: anywhere;
 }
 
 .page-shell {
@@ -966,10 +949,15 @@ th {
 
 .cms-content-shell {
   min-height: 100vh;
+  overflow-x: hidden;
   color: var(--text-dark);
   background:
     radial-gradient(circle at top left, rgba(255, 106, 57, 0.09), transparent 26%),
     linear-gradient(180deg, #fffaf6 0%, #ffffff 26%, #f6fafc 100%);
+}
+
+.cms-content-shell :where(p, h1, h2, h3, h4, h5, h6, a, span, strong, td, th) {
+  overflow-wrap: anywhere;
 }
 
 .cms-content-container {
@@ -1301,8 +1289,14 @@ th {
 .brand-site-shell,
 .brand-subpage {
   min-height: 100vh;
+  overflow-x: hidden;
   color: var(--text-dark);
   background: linear-gradient(180deg, #fffaf6 0%, #ffffff 34%, #f4f7f8 100%);
+}
+
+.brand-site-shell :where(p, h1, h2, h3, h4, h5, h6, a, span, strong, td, th),
+.brand-subpage :where(p, h1, h2, h3, h4, h5, h6, a, span, strong, td, th) {
+  overflow-wrap: anywhere;
 }
 
 .site-container {
