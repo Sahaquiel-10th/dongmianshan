@@ -9,7 +9,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:push": "prisma db push",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "articles:remap-categories": "node scripts/remap-article-categories.mjs"
   },
   "dependencies": {
     "@prisma/client": "^6.18.0",

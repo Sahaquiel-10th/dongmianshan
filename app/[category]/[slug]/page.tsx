@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { ArticleBody } from "@/components/content/article-body";
 import {
   formatArticleDate,
@@ -10,7 +10,7 @@ import {
   getRelatedArticles,
   parseArticleTags,
 } from "@/lib/articles";
-import { isArticleCategorySlug } from "@/lib/categories";
+import { getLegacyArticleCategoryRedirect, isArticleCategorySlug } from "@/lib/categories";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +23,11 @@ type ArticleDetailPageProps = {
 
 export async function generateMetadata({ params }: ArticleDetailPageProps) {
   const { category, slug } = await params;
+  const legacyCategory = getLegacyArticleCategoryRedirect(category);
+
+  if (legacyCategory) {
+    redirect(`/${legacyCategory}/${slug}`);
+  }
 
   if (!isArticleCategorySlug(category)) {
     return {};
@@ -37,6 +42,11 @@ export async function generateMetadata({ params }: ArticleDetailPageProps) {
 
 export default async function ArticleDetailPage({ params }: ArticleDetailPageProps) {
   const { category, slug } = await params;
+  const legacyCategory = getLegacyArticleCategoryRedirect(category);
+
+  if (legacyCategory) {
+    redirect(`/${legacyCategory}/${slug}`);
+  }
 
   if (!isArticleCategorySlug(category)) {
     notFound();

@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "教育 - 东面山内容中心",
-  description: "东面山护肤知识入口，聚合品牌、科普、评测、教程、FAQ 和案例内容。",
+  description: "东面山护肤知识入口，聚合人群认知、使用指南、产品说明、关系送礼、选购指南、问题解决、护肤科普和品牌介绍内容。",
   alternates: {
     canonical: "/hufuzhishi",
   },

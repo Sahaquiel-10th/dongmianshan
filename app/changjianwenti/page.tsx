@@ -28,7 +28,7 @@ export default function FaqLandingPage() {
               <p>占位回答内容，后续由品牌部门补充详细说明。</p>
             </article>
           ))}
-          <Link className="education-card" href="/faq">
+          <Link className="education-card" href="/problem-solving">
             <span>文章栏目</span>
             <strong>查看更多 FAQ 文章</strong>
             <p>进入现有内容中心的 FAQ 栏目。</p>

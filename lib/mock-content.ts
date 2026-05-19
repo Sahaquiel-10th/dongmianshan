@@ -42,7 +42,7 @@ export const MOCK_PUBLISHED_ARTICLES: Article[] = [
     title: "熟龄男士护肤为什么要先看屏障状态",
     slug: "mature-skin-barrier-guide",
     summary: "从屏障、清洁、保湿三个角度，理解熟龄男士护肤的核心起点。",
-    category: "science",
+    category: "skincare-science",
     tags: "屏障修护,熟龄护肤,男士科普",
     seoTitle: "熟龄男士护肤为什么先看屏障状态",
     seoDescription: "东面山科普内容：熟龄男士护肤为什么要优先评估皮肤屏障状态。",
@@ -72,7 +72,7 @@ export const MOCK_PUBLISHED_ARTICLES: Article[] = [
     title: "三步护肤方案是否适合工作繁忙的熟龄男性",
     slug: "three-step-routine-review",
     summary: "从执行成本、肤感和稳定性角度，评估精简护肤方案是否足够实用。",
-    category: "review",
+    category: "product-description",
     tags: "产品评测,三步护肤,效率护肤",
     content: `# 三步护肤方案是否适合工作繁忙的熟龄男性
 
@@ -93,7 +93,7 @@ export const MOCK_PUBLISHED_ARTICLES: Article[] = [
     title: "早晚护肤步骤怎么排才不浪费",
     slug: "morning-evening-routine-tutorial",
     summary: "给首次建立护肤习惯的熟龄男士一份可执行的早晚顺序参考。",
-    category: "tutorial",
+    category: "usage-guide",
     tags: "护肤教程,使用顺序,新手指南",
     content: `# 早晚护肤步骤怎么排才不浪费
 
@@ -116,7 +116,7 @@ export const MOCK_PUBLISHED_ARTICLES: Article[] = [
     title: "FAQ：男士护肤一定要分早晚两套吗",
     slug: "faq-do-men-need-separate-routines",
     summary: "回答熟龄男士护肤里最常见的流程问题，降低上手门槛。",
-    category: "faq",
+    category: "problem-solving",
     tags: "FAQ,护肤流程,男士护理",
     content: `# FAQ：男士护肤一定要分早晚两套吗
 
@@ -131,7 +131,7 @@ export const MOCK_PUBLISHED_ARTICLES: Article[] = [
     title: "案例：从剃须后泛红到状态稳定的 4 周调整",
     slug: "case-shaving-redness-recovery",
     summary: "一个简化的内容示例，展示案例型文章在前台的呈现方式。",
-    category: "case-study",
+    category: "other",
     tags: "案例,剃须敏感,修护记录",
     content: `# 案例：从剃须后泛红到状态稳定的 4 周调整
 

@@ -69,11 +69,15 @@ export const navItems = [
     label: "教育",
     href: "/hufuzhishi",
     children: [
-      { label: "皮肤科普", href: "/science" },
-      { label: "产品评测", href: "/review" },
-      { label: "护肤教程", href: "/tutorial" },
-      { label: "常见问题", href: "/faq" },
-      { label: "使用案例", href: "/case-study" },
+      { label: "其他", href: "/other" },
+      { label: "人群认知", href: "/audience-awareness" },
+      { label: "使用指南", href: "/usage-guide" },
+      { label: "产品说明", href: "/product-description" },
+      { label: "关系送礼", href: "/relationship-gifting" },
+      { label: "选购指南", href: "/selection-guide" },
+      { label: "问题解决", href: "/problem-solving" },
+      { label: "护肤科普", href: "/skincare-science" },
+      { label: "品牌介绍", href: "/brand-introduction" },
     ],
   },
   {
@@ -100,17 +104,17 @@ export const scienceArticles = [
   {
     title: "熟龄男士为什么要先稳定屏障",
     summary: "从清洁、剃须、环境刺激三个角度，解释屏障状态对后续功效护肤的影响。",
-    href: "/science/mature-skin-barrier-guide",
+    href: "/skincare-science/mature-skin-barrier-guide",
   },
   {
     title: "玻色因、胶原与肽类成分如何协同",
     summary: "用通俗语言拆解紧致、充盈、修护背后的配方逻辑。",
-    href: "/science",
+    href: "/skincare-science",
   },
   {
     title: "三步护肤如何适配晨间与夜间",
     summary: "给繁忙男性一套低负担、可长期执行的护肤节奏。",
-    href: "/tutorial/morning-evening-routine-tutorial",
+    href: "/usage-guide/morning-evening-routine-tutorial",
   },
 ];
 
