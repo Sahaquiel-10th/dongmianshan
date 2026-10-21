@@ -17,20 +17,21 @@
     "test:smoke": "node --env-file=.env.local --import tsx scripts/smoke-check.ts",
     "test:links": "node scripts/check-links.mjs",
     "prestart": "node scripts/prepare-production.mjs",
-    "test:editability": "node --env-file=.env.local --import tsx scripts/editability-check.ts"
+    "test:editability": "node --env-file=.env.local --import tsx scripts/editability-check.ts",
+    "test:markdown": "tsx scripts/markdown-check.ts"
   },
   "dependencies": {
+    "@next/env": "16.3.8",
     "@prisma/client": "^6.18.0",
     "iron-session": "^8.0.4",
     "marked": "^18.0.2",
-    "next": "^16.2.1",
+    "next": "16.3.8",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "sanitize-html": "^2.17.3",
-    "sharp": "^0.34.5",
-    "zod": "^4.3.6",
+    "sanitize-html": "2.17.5",
+    "sharp": "0.35.5",
     "tsx": "^4.23.15",
-    "@next/env": "16.2.1"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "22.15.3",

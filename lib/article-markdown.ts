@@ -9,6 +9,12 @@ export function renderArticleMarkdown(content: string) {
   const rawHtml = marked.parse(content, { async: false });
 
   return sanitizeHtml(rawHtml, {
+    // Raw-text containers must be discarded with their contents, even when
+    // they are not in the site's allowed tag list.
+    nonTextTags: [
+      "script", "style", "textarea", "option", "xmp", "noscript",
+      "noembed", "noframes", "iframe", "title", "plaintext",
+    ],
     allowedTags: [
       "h1",
       "h2",

@@ -79,6 +79,7 @@ npm run check
 npm run test:smoke
 npm run test:links
 npm run test:editability
+npm run test:markdown
 npm run build
 ```
 
@@ -93,3 +94,9 @@ npm run build
 全站文案入口 `/admin/site-copy` 管理品牌标识、四个导航及子导航名称、页脚、搜索提示、结果模板、文章及产品固定栏目名称、空状态和访问失败提示。保存即发布；品牌名和四个主导航名不可留空，搜索结果模板保留 `{query}` 和 `{count}`。界面布局、路由和后台本身的操作字段不作为官网运营内容编辑。
 
 `test:editability` 验证每类新增编辑项、上传权限、无效图片拦截和不同页面的图片复用；结果保存在忽略提交的 output 目录。
+
+## 部署补丁与依赖检查
+
+2026-10-21 部署日志中的依赖告警已复核：Next.js / @next/env 固定到 16.3.8、sharp 固定到 0.35.5，正文过滤组件固定到兼容服务器 Node 20 的 sanitize-html 2.17.5。正文继续只允许文章排版标签与受限链接属性，并显式丢弃 raw-text 容器的内容；`test:markdown` 覆盖危险 HTML 与正常文章显示。
+
+本轮 `npm audit` 的 critical 项已清零，仍有 Prisma 6 构建工具链的 4 个 high 提示及 sanitize-html 的 1 个 moderate 提示。过滤组件更高版本要求 Node >=22.12，Prisma 的审计修复要求升级到 7；这些未作未经验证的跨版本升级。当前白名单不允许 SVG、meta、表单或事件属性，但不将此记录视为依赖审计完全通过。不要在服务器执行 `npm audit fix --force`；后续升级应在开发环境验证后发布。
