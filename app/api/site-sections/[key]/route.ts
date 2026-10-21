@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { CmsAuthError, requireAdminApiUser } from "@/lib/auth";
-import { getSectionConfig, normalizeSiteSectionInput } from "@/lib/site-sections";
+import {
+  getSectionConfig,
+  normalizeSiteSectionInput,
+} from "@/lib/site-sections";
 import { prisma } from "@/lib/prisma";
 
 type SectionRouteContext = {
@@ -12,14 +15,23 @@ type SectionRouteContext = {
 
 function handleError(error: unknown) {
   if (error instanceof CmsAuthError) {
-    return NextResponse.json({ error: error.message }, { status: error.status });
+    return NextResponse.json(
+      { error: error.message },
+      { status: error.status },
+    );
   }
 
   if (error instanceof ZodError) {
-    return NextResponse.json({ error: error.issues[0]?.message ?? "提交的数据不合法。" }, { status: 400 });
+    return NextResponse.json(
+      { error: error.issues[0]?.message ?? "提交的数据不合法。" },
+      { status: 400 },
+    );
   }
 
-  return NextResponse.json({ error: error instanceof Error ? error.message : "服务器内部错误。" }, { status: 500 });
+  return NextResponse.json(
+    { error: error instanceof Error ? error.message : "服务器内部错误。" },
+    { status: 500 },
+  );
 }
 
 export async function PUT(request: Request, context: SectionRouteContext) {
@@ -40,6 +52,7 @@ export async function PUT(request: Request, context: SectionRouteContext) {
     const section = await prisma.siteSection.upsert({
       where: { key },
       update: {
+        tags: payload.tags,
         title: payload.title,
         eyebrow: payload.eyebrow,
         subtitle: payload.subtitle,
@@ -53,6 +66,7 @@ export async function PUT(request: Request, context: SectionRouteContext) {
       },
       create: {
         key,
+        tags: payload.tags,
         title: payload.title,
         eyebrow: payload.eyebrow,
         subtitle: payload.subtitle,

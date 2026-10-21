@@ -1,4 +1,5 @@
 export const ARTICLE_CATEGORIES = [
+  { slug: "core-ingredients", label: "核心原料" },
   { slug: "other", label: "其他" },
   { slug: "audience-awareness", label: "人群认知" },
   { slug: "usage-guide", label: "使用指南" },
@@ -13,6 +14,7 @@ export const ARTICLE_CATEGORIES = [
 export type ArticleCategorySlug = (typeof ARTICLE_CATEGORIES)[number]["slug"];
 
 export const ARTICLE_CATEGORY_SLUGS = [
+  "core-ingredients",
   "other",
   "audience-awareness",
   "usage-guide",
@@ -33,20 +35,30 @@ export const LEGACY_ARTICLE_CATEGORY_REDIRECTS = {
   "case-study": "other",
 } as const;
 
-export type LegacyArticleCategorySlug = keyof typeof LEGACY_ARTICLE_CATEGORY_REDIRECTS;
+export type LegacyArticleCategorySlug =
+  keyof typeof LEGACY_ARTICLE_CATEGORY_REDIRECTS;
 
 export const ARTICLE_CATEGORY_LABELS = new Map(
   ARTICLE_CATEGORIES.map((category) => [category.slug, category.label]),
 );
 
 export function getArticleCategoryLabel(slug: string) {
-  return ARTICLE_CATEGORY_LABELS.get(slug as (typeof ARTICLE_CATEGORY_SLUGS)[number]) ?? slug;
+  return (
+    ARTICLE_CATEGORY_LABELS.get(
+      slug as (typeof ARTICLE_CATEGORY_SLUGS)[number],
+    ) ?? slug
+  );
 }
 
-export function isArticleCategorySlug(value: string): value is ArticleCategorySlug {
+export function isArticleCategorySlug(
+  value: string,
+): value is ArticleCategorySlug {
   return ARTICLE_CATEGORY_SLUGS.includes(value as ArticleCategorySlug);
 }
 
 export function getLegacyArticleCategoryRedirect(value: string) {
-  return LEGACY_ARTICLE_CATEGORY_REDIRECTS[value as LegacyArticleCategorySlug] ?? null;
+  return (
+    LEGACY_ARTICLE_CATEGORY_REDIRECTS[value as LegacyArticleCategorySlug] ??
+    null
+  );
 }

@@ -31,6 +31,8 @@ model Article {
   seoTitle       String?  @db.VarChar(200)
   seoDescription String?  @db.Text
   relatedArticleIds Json?
+  relatedProductSlugs Json?
+  isExample      Boolean @default(false)
   status         ArticleStatus @default(draft)
   author         String?  @db.VarChar(100)
   publishedAt    DateTime?
@@ -56,6 +58,11 @@ model Product {
   shopUrl        String?       @db.VarChar(2048)
   benefits       Json?
   scenes         Json?
+  usage          String?       @db.Text
+  features       String?       @db.Text
+  ingredients    String?       @db.Text
+  relatedArticleIds Json?
+  isExample      Boolean       @default(false)
   seoTitle       String?       @db.VarChar(200)
   seoDescription String?       @db.Text
   status         PublishStatus @default(draft)
@@ -79,6 +86,7 @@ model SiteSection {
   mediaUrl       String?       @db.VarChar(2048)
   ctaLabel       String?       @db.VarChar(80)
   ctaUrl         String?       @db.VarChar(2048)
+  tags           Json?
   items          Json?
   status         PublishStatus @default(draft)
   sortOrder      Int           @default(0)
@@ -87,4 +95,11 @@ model SiteSection {
 
   @@index([status])
   @@index([sortOrder])
+}
+
+model MediaAsset {
+  name      String   @id @db.VarChar(60)
+  content   Bytes    @db.LongBlob
+  mimeType  String   @default("image/webp") @db.VarChar(50)
+  createdAt DateTime @default(now())
 }

@@ -24,7 +24,8 @@ export const products = [
     shortName: "洁面慕斯",
     routineStep: "第一步 清洁",
     subtitle: "温和清洁，洗去油脂与疲惫感",
-    summary: "为剃须后、出油多、通勤频繁的熟龄男性设计，帮助肌肤回到清爽但不紧绷的状态。",
+    summary:
+      "为剃须后、出油多、通勤频繁的熟龄男性设计，帮助肌肤回到清爽但不紧绷的状态。",
     image: placeholderImages.cleanser,
     shopUrl: shopLinks.cleanser,
     benefits: ["温和净澈", "剃须后舒缓", "清爽不拔干"],
@@ -36,7 +37,8 @@ export const products = [
     shortName: "精华水",
     routineStep: "第二步 补水",
     subtitle: "补水修护，打开后续吸收通道",
-    summary: "用于洁面后第一时间补充水分，帮助改善粗糙、暗沉、干纹初现等熟龄肌常见问题。",
+    summary:
+      "用于洁面后第一时间补充水分，帮助改善粗糙、暗沉、干纹初现等熟龄肌常见问题。",
     image: placeholderImages.toner,
     shopUrl: shopLinks.toner,
     benefits: ["水油平衡", "细致肤感", "提升通透感"],
@@ -48,7 +50,8 @@ export const products = [
     shortName: "精华乳",
     routineStep: "第三步 修护",
     subtitle: "紧致锁水，守住成熟男性的体面状态",
-    summary: "承接补水步骤，提供更持久的滋润与屏障支持，适合关注轮廓、细纹和干燥问题的人群。",
+    summary:
+      "承接补水步骤，提供更持久的滋润与屏障支持，适合关注轮廓、细纹和干燥问题的人群。",
     image: placeholderImages.lotion,
     shopUrl: shopLinks.lotion,
     benefits: ["紧致抗老", "强韧屏障", "长效锁水"],
@@ -58,40 +61,30 @@ export const products = [
 
 export const navItems = [
   {
-    label: "产品一览",
-    href: "/chanpin",
-    children: products.map((product) => ({
-      label: product.shortName,
-      href: `/chanpin/${product.slug}`,
-    })),
-  },
-  {
-    label: "教育",
-    href: "/hufuzhishi",
-    children: [
-      { label: "其他", href: "/other" },
-      { label: "人群认知", href: "/audience-awareness" },
-      { label: "使用指南", href: "/usage-guide" },
-      { label: "产品说明", href: "/product-description" },
-      { label: "关系送礼", href: "/relationship-gifting" },
-      { label: "选购指南", href: "/selection-guide" },
-      { label: "问题解决", href: "/problem-solving" },
-      { label: "护肤科普", href: "/skincare-science" },
-      { label: "品牌介绍", href: "/brand-introduction" },
-    ],
-  },
-  {
-    label: "关于东面山",
+    label: "品牌",
     href: "/guanyudongmianshan",
     children: [
-      { label: "品牌故事", href: "/guanyudongmianshan#story" },
-      { label: "研发理念", href: "/guanyudongmianshan#research" },
+      { label: "品牌理念", href: "/guanyudongmianshan" },
+      { label: "品牌故事", href: "/brand-introduction" },
     ],
   },
   {
-    label: "肌肤测试",
-    href: "/jifuceping",
+    label: "产品",
+    href: "/chanpin",
+    children: [] as { label: string; href: string }[],
   },
+  {
+    label: "护理指导",
+    href: "/hufuzhishi",
+    children: [
+      { label: "人群与年龄", href: "/audience-awareness" },
+      { label: "需求与困扰", href: "/problem-solving" },
+      { label: "使用方法", href: "/usage-guide" },
+      { label: "核心原料", href: "/core-ingredients" },
+      { label: "护肤知识", href: "/skincare-science" },
+    ],
+  },
+  { label: "官方购买", href: "/goumai" },
 ];
 
 export const topLinks = [
@@ -103,7 +96,8 @@ export const topLinks = [
 export const scienceArticles = [
   {
     title: "熟龄男士为什么要先稳定屏障",
-    summary: "从清洁、剃须、环境刺激三个角度，解释屏障状态对后续功效护肤的影响。",
+    summary:
+      "从清洁、剃须、环境刺激三个角度，解释屏障状态对后续功效护肤的影响。",
     href: "/skincare-science/mature-skin-barrier-guide",
   },
   {
@@ -121,7 +115,8 @@ export const scienceArticles = [
 export const testimonials = [
   {
     name: "42岁 企业管理者",
-    quote: "以前护肤步骤太多坚持不下来，三步流程更适合我的工作节奏，洗完脸后的紧绷感少了。",
+    quote:
+      "以前护肤步骤太多坚持不下来，三步流程更适合我的工作节奏，洗完脸后的紧绷感少了。",
   },
   {
     name: "38岁 户外运动爱好者",
@@ -129,7 +124,8 @@ export const testimonials = [
   },
   {
     name: "45岁 内容创作者",
-    quote: "拍摄前状态更稳定，脸部看起来没那么疲惫，品牌调性也符合成熟男性审美。",
+    quote:
+      "拍摄前状态更稳定，脸部看起来没那么疲惫，品牌调性也符合成熟男性审美。",
   },
 ];
 

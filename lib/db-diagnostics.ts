@@ -26,6 +26,55 @@ export type CmsDatabaseDiagnostics = {
 
 const REQUIRED_CHECKS = [
   {
+    key: "product_usage",
+    label: "产品五项详情",
+    tableName: "Product",
+    columnName: "usage",
+    detail: "产品使用方法字段已就绪。",
+  },
+  {
+    key: "product_features",
+    label: "产品特性",
+    tableName: "Product",
+    columnName: "features",
+    detail: "产品特性字段已就绪。",
+  },
+  {
+    key: "product_ingredients",
+    label: "原料成分",
+    tableName: "Product",
+    columnName: "ingredients",
+    detail: "原料成分字段已就绪。",
+  },
+  {
+    key: "product_relations",
+    label: "产品知识关联",
+    tableName: "Product",
+    columnName: "relatedArticleIds",
+    detail: "产品与知识双向关联已就绪。",
+  },
+  {
+    key: "article_products",
+    label: "知识产品关联",
+    tableName: "Article",
+    columnName: "relatedProductSlugs",
+    detail: "文章关联产品字段已就绪。",
+  },
+  {
+    key: "article_example",
+    label: "文章示例标记",
+    tableName: "Article",
+    columnName: "isExample",
+    detail: "示例标记已就绪。",
+  },
+  {
+    key: "product_example",
+    label: "产品示例标记",
+    tableName: "Product",
+    columnName: "isExample",
+    detail: "产品示例标记已就绪。",
+  },
+  {
     key: "article_deleted_at",
     label: "文章软删除字段",
     tableName: "Article",
@@ -80,7 +129,9 @@ export async function runCmsDatabaseDiagnostics(): Promise<CmsDatabaseDiagnostic
   const databaseTarget = getSafeDatabaseTarget();
 
   try {
-    const databaseRows = await prisma.$queryRaw<{ databaseName: string | null }[]>`
+    const databaseRows = await prisma.$queryRaw<
+      { databaseName: string | null }[]
+    >`
       SELECT DATABASE() AS databaseName
     `;
     const tableRows = await prisma.$queryRaw<TableRow[]>`
@@ -94,12 +145,15 @@ export async function runCmsDatabaseDiagnostics(): Promise<CmsDatabaseDiagnostic
       FROM INFORMATION_SCHEMA.COLUMNS
       WHERE TABLE_SCHEMA = DATABASE()
         AND LOWER(TABLE_NAME) IN ('article', 'product', 'sitesection')
-        AND LOWER(COLUMN_NAME) = 'deletedat'
+
     `;
 
     const tables = new Set(tableRows.map((row) => row.tableName.toLowerCase()));
     const columns = new Set(
-      columnRows.map((row) => `${row.tableName.toLowerCase()}.${row.columnName.toLowerCase()}`),
+      columnRows.map(
+        (row) =>
+          `${row.tableName.toLowerCase()}.${row.columnName.toLowerCase()}`,
+      ),
     );
 
     return {
@@ -111,13 +165,17 @@ export async function runCmsDatabaseDiagnostics(): Promise<CmsDatabaseDiagnostic
         const columnName = getColumnName(check);
         const tableName = check.tableName.toLowerCase();
         const hasTable = tables.has(tableName);
-        const ok = columnName ? hasTable && columns.has(`${tableName}.${columnName.toLowerCase()}`) : hasTable;
+        const ok = columnName
+          ? hasTable && columns.has(`${tableName}.${columnName.toLowerCase()}`)
+          : hasTable;
 
         return {
           key: check.key,
           label: check.label,
           ok,
-          detail: ok ? check.detail : `缺少 ${columnName ? `${check.tableName}.${columnName}` : check.tableName}`,
+          detail: ok
+            ? check.detail
+            : `缺少 ${columnName ? `${check.tableName}.${columnName}` : check.tableName}`,
         };
       }),
     };

@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteSectionForm } from "@/components/admin/site-section-form";
-import { getFallbackSection, getSectionConfig, toSectionContent } from "@/lib/site-sections";
+import {
+  getFallbackSection,
+  getSectionConfig,
+  toSectionContent,
+} from "@/lib/site-sections";
 import { prisma } from "@/lib/prisma";
 
 type AdminSectionPageProps = {
@@ -10,7 +14,9 @@ type AdminSectionPageProps = {
   }>;
 };
 
-export default async function AdminSectionPage({ params }: AdminSectionPageProps) {
+export default async function AdminSectionPage({
+  params,
+}: AdminSectionPageProps) {
   const { key } = await params;
   const config = getSectionConfig(key);
 
@@ -28,10 +34,13 @@ export default async function AdminSectionPage({ params }: AdminSectionPageProps
       },
     });
   } catch {
-    setupError = "官网板块表暂时无法读取。可以先查看默认表单结构；保存前需要先在部署环境执行 npm run prisma:push。";
+    setupError =
+      "官网板块表暂时无法读取。可以先查看默认表单结构；保存前需要先在部署环境执行 npm run prisma:push。";
   }
 
-  const section = stored ? toSectionContent(stored) : getFallbackSection(config.key);
+  const section = stored
+    ? toSectionContent(stored)
+    : getFallbackSection(config.key);
 
   return (
     <section className="cms-admin-panel">
@@ -51,7 +60,20 @@ export default async function AdminSectionPage({ params }: AdminSectionPageProps
           {setupError} <Link href="/admin/setup">查看数据库检查</Link>
         </p>
       ) : null}
-      <SiteSectionForm section={section} label={config.label} hint={config.hint} itemLabel={config.itemLabel} />
+      <a
+        className="cms-admin-button"
+        href={config.location}
+        target="_blank"
+        rel="noreferrer"
+      >
+        查看官网对应位置
+      </a>
+      <SiteSectionForm
+        section={section}
+        label={config.label}
+        hint={config.hint}
+        itemLabel={config.itemLabel}
+      />
     </section>
   );
 }

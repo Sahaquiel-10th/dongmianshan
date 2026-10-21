@@ -1,7 +1,12 @@
+import { IncomingLinks } from "@/components/admin/incoming-links";
+import { stringList } from "@/lib/content-fields";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArticleForm } from "@/components/admin/article-form";
-import { formatDateTimeLocal, serializeRelatedArticleIds } from "@/lib/articles";
+import {
+  formatDateTimeLocal,
+  serializeRelatedArticleIds,
+} from "@/lib/articles";
 import { prisma } from "@/lib/prisma";
 
 type EditArticlePageProps = {
@@ -10,7 +15,9 @@ type EditArticlePageProps = {
   }>;
 };
 
-export default async function EditArticlePage({ params }: EditArticlePageProps) {
+export default async function EditArticlePage({
+  params,
+}: EditArticlePageProps) {
   const { id } = await params;
   const article = await prisma.article.findUnique({
     where: {
@@ -35,10 +42,19 @@ export default async function EditArticlePage({ params }: EditArticlePageProps) 
         </Link>
       </div>
 
+      <IncomingLinks
+        articleId={article.id}
+        ownArticleIds={stringList(article.relatedArticleIds)}
+        ownProductSlugs={stringList(article.relatedProductSlugs)}
+      />
       <ArticleForm
         mode="edit"
         articleId={article.id}
         initialValues={{
+          relatedProductSlugs: serializeRelatedArticleIds(
+            article.relatedProductSlugs,
+          ),
+          isExample: article.isExample,
           code: article.code ?? "",
           title: article.title,
           slug: article.slug,
@@ -49,7 +65,9 @@ export default async function EditArticlePage({ params }: EditArticlePageProps) 
           content: article.content,
           seoTitle: article.seoTitle ?? "",
           seoDescription: article.seoDescription ?? "",
-          relatedArticleIds: serializeRelatedArticleIds(article.relatedArticleIds),
+          relatedArticleIds: serializeRelatedArticleIds(
+            article.relatedArticleIds,
+          ),
           status: article.status,
           author: article.author ?? "",
           publishedAt: formatDateTimeLocal(article.publishedAt),

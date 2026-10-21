@@ -26,7 +26,8 @@ export default async function AdminSectionsPage() {
       },
     });
   } catch {
-    setupError = "官网板块表暂时无法读取。通常是线上数据库还没有同步 SiteSection 表，请先执行 npm run prisma:push。";
+    setupError =
+      "官网板块表暂时无法读取。通常是线上数据库还没有同步 SiteSection 表，请先执行 npm run prisma:push。";
   }
 
   const sectionMap = new Map(sections.map((section) => [section.key, section]));
@@ -37,7 +38,9 @@ export default async function AdminSectionsPage() {
         <div>
           <p className="cms-admin-eyebrow">Site Sections</p>
           <h2>官网板块管理</h2>
-          <p>分栏管理首页轮播、男士护肤场景、皮肤科普、用户证言、教育、关于东面山和肌肤测试。</p>
+          <p>
+            每张卡片对应官网的实际页面或区块，文章和产品内容在各自列表维护。
+          </p>
         </div>
       </div>
 
@@ -46,19 +49,41 @@ export default async function AdminSectionsPage() {
           {setupError} <Link href="/admin/setup">查看数据库检查</Link>
         </p>
       ) : null}
+      <p>
+        <Link
+          className="cms-admin-button cms-admin-button-primary"
+          href="/admin/site-copy"
+        >
+          编辑全站文案、导航与页脚
+        </Link>
+      </p>
       <div className="cms-admin-card-grid">
         {SITE_SECTION_CONFIGS.map((config) => {
           const section = sectionMap.get(config.key);
-          const itemCount = Array.isArray(section?.items) ? section.items.length : 0;
+          const itemCount = Array.isArray(section?.items)
+            ? section.items.length
+            : 0;
 
           return (
             <article className="cms-admin-card" key={config.key}>
               <h3>{config.label}</h3>
               <p>{config.hint}</p>
               <p>
-                {section ? `状态：${section.status === "published" ? "已发布" : "草稿"}，条目：${itemCount}` : "暂无内容，点击编辑补充。"}
+                <Link
+                  className="cms-admin-button"
+                  href={config.location}
+                  target="_blank"
+                >
+                  查看官网对应位置
+                </Link>
+                {section
+                  ? `状态：${section.status === "published" ? "已发布" : "草稿"}，条目：${itemCount}`
+                  : "暂无内容，点击编辑补充。"}
               </p>
-              <Link className="cms-admin-button cms-admin-button-primary" href={`/admin/sections/${config.key}`}>
+              <Link
+                className="cms-admin-button cms-admin-button-primary"
+                href={`/admin/sections/${config.key}`}
+              >
                 编辑板块
               </Link>
             </article>

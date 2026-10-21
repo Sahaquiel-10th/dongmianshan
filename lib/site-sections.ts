@@ -1,56 +1,103 @@
 import { z } from "zod";
-import { placeholderImages, scienceArticles, testimonials } from "./homepage";
+import { placeholderImages } from "./homepage";
+import { stringList } from "./content-fields";
+import { contentLink } from "./content-fields";
+import { ARTICLE_CATEGORIES, type ArticleCategorySlug } from "./categories";
 import { prisma } from "./prisma";
 
 export const SITE_SECTION_CONFIGS = [
   {
+    key: "search",
+    label: "辅助页面 · 搜索页",
+    location: "/sousuo",
+    hint: "维护搜索页标题、说明、配图、标签与补充入口。搜索框及结果提示在全站文案中维护。",
+    itemLabel: "搜索补充内容",
+  },
+  ...ARTICLE_CATEGORIES.filter((c) => c.slug !== "core-ingredients").map(
+    (c) => ({
+      key: `category-${c.slug}` as `category-${ArticleCategorySlug}`,
+      label: `护理栏目 · ${c.label}`,
+      location: `/${c.slug}`,
+      hint: "维护这个分类页自己的标题、说明、主图、标签和补充内容。分类名称在全站文案中维护。",
+      itemLabel: "栏目补充内容",
+    }),
+  ),
+  {
     key: "homepage-hero",
-    label: "首页轮播",
-    hint: "建议 1-5 张，图片建议 1920x1080，标题 40 字以内，摘要 120 字以内。",
-    itemLabel: "轮播图",
+    label: "首页 · 海报",
+    location: "/",
+    hint: "首页海报；标题、说明、主图和按钮逐项对应官网。多张海报用条目维护。",
+    itemLabel: "海报",
   },
   {
-    key: "mens-scenes",
-    label: "男士护肤场景",
-    hint: "建议上传 1 张横图 1200x900，并维护 2-6 个场景标签。",
-    itemLabel: "场景标签",
+    key: "homepage-products",
+    label: "首页 · 产品领域",
+    location: "/#products",
+    hint: "编辑首页产品区标题与说明。产品图、介绍和顺序请到产品管理修改。",
+    itemLabel: "补充入口",
   },
   {
-    key: "skin-science",
-    label: "皮肤科普",
-    hint: "建议 1 张横图 1200x900，文章卡片可链接到教育文章。",
-    itemLabel: "科普入口",
+    key: "homepage-ingredients",
+    label: "首页 · 核心原料",
+    location: "/#ingredients",
+    hint: "编辑首页原料区标题与说明。具体原料词条请在文章管理的核心原料分类编辑。",
+    itemLabel: "补充入口",
   },
   {
-    key: "testimonials",
-    label: "用户证言",
-    hint: "建议 3-6 条，每条证言 120 字以内。",
-    itemLabel: "证言",
+    key: "products-intro",
+    label: "产品 · 列表页",
+    location: "/chanpin",
+    hint: "编辑产品列表页介绍。五项产品信息及购买链接在产品管理中编辑。",
+    itemLabel: "补充入口",
   },
   {
     key: "education",
-    label: "教育",
-    hint: "维护教育入口页的标题、说明和栏目卡片。",
-    itemLabel: "栏目入口",
+    label: "护理指导 · 入口",
+    location: "/hufuzhishi",
+    hint: "条目为可编辑的二级入口，填写站内链接。正文用于说明如何从人群走到产品。",
+    itemLabel: "护理入口",
+  },
+  {
+    key: "ingredients",
+    label: "护理指导 · 原料入口",
+    location: "/core-ingredients",
+    hint: "编辑核心原料列表标题和说明。原料详情在文章管理中编辑。",
+    itemLabel: "补充入口",
   },
   {
     key: "about",
-    label: "关于东面山",
-    hint: "维护品牌故事、研发理念等内容块，每块正文建议 300 字以内。",
-    itemLabel: "内容块",
+    label: "品牌 · 理念",
+    location: "/guanyudongmianshan",
+    hint: "编辑品牌理念、背景、故事与研发介绍；每个条目对应官网一个内容块。",
+    itemLabel: "品牌内容",
   },
   {
-    key: "skin-test",
-    label: "肌肤测试",
-    hint: "维护测试页说明和问题，问题建议 4-8 个。",
-    itemLabel: "测试问题",
+    key: "purchase",
+    label: "官方购买 · 渠道说明",
+    location: "/goumai",
+    hint: "渠道条目可维护名称、说明和链接。每款产品的直购链接由产品管理统一维护。",
+    itemLabel: "购买渠道",
+  },
+  {
+    key: "contact",
+    label: "辅助页面 · 联系我们",
+    location: "/lianxiwomen",
+    hint: "维护联系与售后信息，可用条目填写不同联系方式。",
+    itemLabel: "联系信息",
+  },
+  {
+    key: "faq",
+    label: "辅助页面 · 常见问题",
+    location: "/changjianwenti",
+    hint: "一个条目对应一组问答；详细说明可链接到护理文章。",
+    itemLabel: "问答",
   },
 ] as const;
-
 export type SiteSectionKey = (typeof SITE_SECTION_CONFIGS)[number]["key"];
-
-export const SITE_SECTION_KEYS = SITE_SECTION_CONFIGS.map((item) => item.key) as [SiteSectionKey, ...SiteSectionKey[]];
-
+export const SITE_SECTION_KEYS = SITE_SECTION_CONFIGS.map((x) => x.key) as [
+  SiteSectionKey,
+  ...SiteSectionKey[],
+];
 export type SiteSectionItem = {
   id: string;
   title: string;
@@ -62,7 +109,6 @@ export type SiteSectionItem = {
   tags?: string[];
   deletedAt?: string | null;
 };
-
 export type SiteSectionContent = {
   key: SiteSectionKey;
   title: string;
@@ -73,98 +119,75 @@ export type SiteSectionContent = {
   ctaLabel?: string | null;
   ctaUrl?: string | null;
   status: "draft" | "published";
+  tags?: string[];
   items: SiteSectionItem[];
 };
-
-const sectionItemSchema = z.object({
-  id: z.string().trim().optional(),
-  title: z.string().trim().min(1, "条目标题不能为空").max(80, "条目标题不能超过 80 字"),
-  subtitle: z.string().trim().max(160, "条目副标题不能超过 160 字").optional().nullable(),
-  body: z.string().trim().max(500, "条目正文不能超过 500 字").optional().nullable(),
-  mediaUrl: z.string().trim().max(500, "媒体链接过长").optional().nullable(),
-  ctaLabel: z.string().trim().max(20, "按钮文字不能超过 20 字").optional().nullable(),
-  ctaUrl: z.string().trim().max(500, "跳转链接过长").optional().nullable(),
-  tagsText: z.string().trim().max(120, "标签总长度不能超过 120 字").optional().nullable(),
-  deletedAt: z.string().nullable().optional(),
+const optionalText = z.string().trim().optional().nullable();
+const itemSchema = z.object({
+  id: optionalText,
+  title: z.string().trim().min(1, "条目标题不能为空").max(80),
+  subtitle: optionalText,
+  body: z.string().trim().max(1500).optional().nullable(),
+  mediaUrl: contentLink.optional().nullable(),
+  ctaLabel: optionalText,
+  ctaUrl: contentLink.optional().nullable(),
+  tagsText: optionalText,
+  deletedAt: optionalText,
 });
-
 export const siteSectionInputSchema = z.object({
+  tagsText: optionalText,
   key: z.enum(SITE_SECTION_KEYS),
-  title: z.string().trim().min(1, "板块标题不能为空").max(80, "板块标题不能超过 80 字"),
-  eyebrow: z.string().trim().max(30, "眉标不能超过 30 字").optional().nullable(),
-  subtitle: z.string().trim().max(180, "副标题不能超过 180 字").optional().nullable(),
-  body: z.string().trim().max(800, "正文不能超过 800 字").optional().nullable(),
-  mediaUrl: z.string().trim().max(500, "媒体链接过长").optional().nullable(),
-  ctaLabel: z.string().trim().max(20, "按钮文字不能超过 20 字").optional().nullable(),
-  ctaUrl: z.string().trim().max(500, "跳转链接过长").optional().nullable(),
+  title: z.string().trim().min(1, "板块标题不能为空").max(80),
+  eyebrow: optionalText,
+  subtitle: z.string().trim().max(500).optional().nullable(),
+  body: z.string().trim().max(3000).optional().nullable(),
+  mediaUrl: contentLink.optional().nullable(),
+  ctaLabel: optionalText,
+  ctaUrl: contentLink.optional().nullable(),
   status: z.enum(["draft", "published"]),
   sortOrder: z.coerce.number().int().min(0).max(9999).default(0),
-  items: z.array(sectionItemSchema).max(12, "每个板块最多 12 个条目"),
+  items: z.array(itemSchema).max(12),
 });
-
 export type SiteSectionInput = z.infer<typeof siteSectionInputSchema>;
-
-function cleanString(value: string | null | undefined) {
-  const trimmed = value?.trim();
-  return trimmed ? trimmed : null;
-}
-
-function normalizeTags(tagsText: string | null | undefined) {
-  return (tagsText ?? "")
-    .split(/[,，\n]/)
-    .map((tag) => tag.trim())
-    .filter(Boolean)
-    .slice(0, 6);
-}
-
-function isWithinRetention(deletedAt: string | null | undefined) {
-  if (!deletedAt) {
-    return true;
-  }
-
-  const deletedTime = new Date(deletedAt).getTime();
-  return Number.isNaN(deletedTime) || Date.now() - deletedTime <= 15 * 24 * 60 * 60 * 1000;
-}
-
+const clean = (x: string | null | undefined) => x?.trim() || null;
 export function normalizeSiteSectionInput(input: unknown) {
-  const parsed = siteSectionInputSchema.parse(input);
-
+  const { tagsText, ...parsed } = siteSectionInputSchema.parse(input);
   return {
     ...parsed,
-    eyebrow: cleanString(parsed.eyebrow),
-    subtitle: cleanString(parsed.subtitle),
-    body: cleanString(parsed.body),
-    mediaUrl: cleanString(parsed.mediaUrl),
-    ctaLabel: cleanString(parsed.ctaLabel),
-    ctaUrl: cleanString(parsed.ctaUrl),
+    tags: (tagsText ?? "")
+      .split(/[,，\n]/)
+      .map((x) => x.trim())
+      .filter(Boolean),
+    eyebrow: clean(parsed.eyebrow),
+    subtitle: clean(parsed.subtitle),
+    body: clean(parsed.body),
+    mediaUrl: clean(parsed.mediaUrl),
+    ctaLabel: clean(parsed.ctaLabel),
+    ctaUrl: clean(parsed.ctaUrl),
     items: parsed.items
-      .filter((item) => isWithinRetention(item.deletedAt))
-      .map((item) => ({
-        id: item.id?.trim() || crypto.randomUUID(),
-        title: item.title,
-        subtitle: cleanString(item.subtitle) ?? undefined,
-        body: cleanString(item.body) ?? undefined,
-        mediaUrl: cleanString(item.mediaUrl) ?? undefined,
-        ctaLabel: cleanString(item.ctaLabel) ?? undefined,
-        ctaUrl: cleanString(item.ctaUrl) ?? undefined,
-        tags: normalizeTags(item.tagsText),
-        deletedAt: item.deletedAt ?? null,
+      .filter(
+        (x) =>
+          !x.deletedAt ||
+          Date.now() - new Date(x.deletedAt).getTime() < 15 * 86400000,
+      )
+      .map((x) => ({
+        id: clean(x.id) || crypto.randomUUID(),
+        title: x.title,
+        subtitle: clean(x.subtitle) ?? undefined,
+        body: clean(x.body) ?? undefined,
+        mediaUrl: clean(x.mediaUrl) ?? undefined,
+        ctaLabel: clean(x.ctaLabel) ?? undefined,
+        ctaUrl: clean(x.ctaUrl) ?? undefined,
+        tags: (x.tagsText ?? "")
+          .split(/[,，\n]/)
+          .map((s) => s.trim())
+          .filter(Boolean),
+        deletedAt: x.deletedAt ?? null,
       })),
   };
 }
-
-export function getSectionConfig(key: string) {
-  return SITE_SECTION_CONFIGS.find((section) => section.key === key) ?? null;
-}
-
-function liveItems(items: SiteSectionItem[]) {
-  return items.filter((item) => !item.deletedAt);
-}
-
-function parseItems(value: unknown): SiteSectionItem[] {
-  return Array.isArray(value) ? (value as SiteSectionItem[]) : [];
-}
-
+export const getSectionConfig = (key: string) =>
+  SITE_SECTION_CONFIGS.find((x) => x.key === key) ?? null;
 export function toSectionContent(section: {
   key: string;
   title: string;
@@ -176,132 +199,226 @@ export function toSectionContent(section: {
   ctaUrl: string | null;
   status: "draft" | "published";
   items: unknown;
+  tags?: unknown;
 }): SiteSectionContent {
   return {
+    ...section,
     key: section.key as SiteSectionKey,
-    title: section.title,
-    eyebrow: section.eyebrow,
-    subtitle: section.subtitle,
-    body: section.body,
-    mediaUrl: section.mediaUrl,
-    ctaLabel: section.ctaLabel,
-    ctaUrl: section.ctaUrl,
-    status: section.status,
-    items: parseItems(section.items),
+    tags: stringList(section.tags),
+    items: Array.isArray(section.items)
+      ? (section.items as SiteSectionItem[])
+      : [],
   };
 }
-
-const fallbackSections: Record<SiteSectionKey, SiteSectionContent> = {
-  "homepage-hero": {
-    key: "homepage-hero",
-    title: "东面山洁面慕斯",
-    eyebrow: "第一步 清洁",
-    subtitle: "为剃须后、出油多、通勤频繁的熟龄男性设计。",
+export const fallbackSections: Record<SiteSectionKey, SiteSectionContent> = {
+  ...(Object.fromEntries(
+    ARTICLE_CATEGORIES.map((c) => [
+      `category-${c.slug}`,
+      {
+        key: `category-${c.slug}`,
+        title: c.label,
+        eyebrow: "护理指导",
+        subtitle: "从这里找到你的问题，继续了解相关原料、护理方法与产品。",
+        status: "published" as const,
+        items: [] as SiteSectionItem[],
+      },
+    ]),
+  ) as Record<`category-${ArticleCategorySlug}`, SiteSectionContent>),
+  search: {
+    key: "search",
+    title: "把你的问题，放在这里",
+    eyebrow: "站内搜索",
     status: "published",
     items: [],
   },
-  "mens-scenes": {
-    key: "mens-scenes",
-    title: "把护肤放进成熟男性真实的一天",
-    eyebrow: "男士护肤场景",
-    subtitle:
-      "东面山三步方案面向晨间通勤、剃须后、运动后、夜间修护等高频场景，重点解决熟龄男性常见的紧绷、暗沉、粗糙和疲惫感。",
-    mediaUrl: placeholderImages.routine,
-    ctaLabel: "进入肌肤测试",
-    ctaUrl: "/jifuceping",
+  "homepage-hero": {
+    key: "homepage-hero",
+    eyebrow: "东方熟龄肌男士护理",
+    title: "懂你的肌肤，让护理更简单",
+    subtitle: "从人群与需求出发，了解清洁、补水、保湿，找到自己的日常护理。",
+    mediaUrl: placeholderImages.cleanser,
+    ctaLabel: "找到我的护理方向",
+    ctaUrl: "/hufuzhishi",
     status: "published",
-    items: ["商务通勤", "剃须敏感", "运动出汗", "熬夜疲惫"].map((title) => ({ id: title, title })),
+    items: [],
   },
-  "skin-science": {
-    key: "skin-science",
-    title: "用研究内容回答熟龄男士护肤问题",
-    eyebrow: "皮肤科普",
-    subtitle: "用科普文章解释屏障、剃须刺激、补水、紧致和成分协同，方便用户理解。",
-    mediaUrl: placeholderImages.science,
+  "homepage-products": {
+    key: "homepage-products",
+    eyebrow: "产品领域",
+    title: "三步，回到日常",
+    subtitle: "先了解每一步，再选择适合自己的产品。",
+    ctaLabel: "查看全部产品",
+    ctaUrl: "/chanpin",
     status: "published",
-    items: scienceArticles.map((article) => ({
-      id: article.title,
-      title: article.title,
-      body: article.summary,
-      ctaUrl: article.href,
-    })),
+    items: [],
   },
-  testimonials: {
-    key: "testimonials",
-    title: "东面山在真实使用场景里被看见",
-    eyebrow: "用户证言",
+  "homepage-ingredients": {
+    key: "homepage-ingredients",
+    eyebrow: "核心原料",
+    title: "看懂原料，也看懂自己的需求",
+    subtitle: "原料是什么、与熟龄男士有什么关系，从这里继续了解。",
+    ctaLabel: "了解核心原料",
+    ctaUrl: "/core-ingredients",
     status: "published",
-    items: testimonials.map((item) => ({
-      id: item.name,
-      title: item.name,
-      body: item.quote,
-    })),
+    items: [],
+  },
+  "products-intro": {
+    key: "products-intro",
+    eyebrow: "产品",
+    title: "清洁、补水、保湿，三步讲清楚",
+    subtitle: "了解基础介绍、使用方法、特性、原料成分与功能功效，再做选择。",
+    status: "published",
+    items: [],
   },
   education: {
     key: "education",
-    title: "护肤知识入口",
-    eyebrow: "教育",
-    subtitle: "这里承接 skincare education 逻辑，用拼音路径作为中国国内 SEO 的内容入口。",
+    eyebrow: "护理指导",
+    title: "从你的问题，找到护理方向",
+    subtitle:
+      "我是什么人群？当下有什么需求？从一个问题出发，顺着关联了解原料、方法与产品。",
+    body: "人群与年龄 → 需求与困扰 → 原料与知识 → 对应产品",
+    status: "published",
+    items: [
+      {
+        id: "audience",
+        title: "从人群与年龄开始",
+        body: "例如：35 岁的熟龄男士，怎么认识自己的肌肤需求？",
+        ctaLabel: "了解人群",
+        ctaUrl: "/audience-awareness",
+      },
+      {
+        id: "concerns",
+        title: "从需求与困扰开始",
+        body: "例如：早上脸上油，除了清洁，还要了解什么？",
+        ctaLabel: "找到我的问题",
+        ctaUrl: "/problem-solving",
+      },
+      {
+        id: "ingredients",
+        title: "从核心原料开始",
+        body: "认识氨基酸、人参皂苷等原料主题。",
+        ctaLabel: "了解原料",
+        ctaUrl: "/core-ingredients",
+      },
+      {
+        id: "routine",
+        title: "从使用方法开始",
+        body: "清洁、补水、保湿，如何放进日常。",
+        ctaLabel: "了解使用方法",
+        ctaUrl: "/usage-guide",
+      },
+      {
+        id: "science",
+        title: "从护肤知识开始",
+        body: "用容易理解的知识，帮助自己做选择。",
+        ctaLabel: "阅读护肤知识",
+        ctaUrl: "/skincare-science",
+      },
+    ],
+  },
+  ingredients: {
+    key: "ingredients",
+    eyebrow: "核心原料",
+    title: "原料与人群，放在一起理解",
+    subtitle: "从是什么、作用依据，到与熟龄肌需求的关系。",
     status: "published",
     items: [],
   },
   about: {
     key: "about",
-    title: "专注东方熟龄肌男士护肤",
-    eyebrow: "关于东面山",
-    subtitle: "成熟男性需要的不是复杂步骤，而是一套能长期执行、兼顾体面与效率的护理方案。",
+    eyebrow: "品牌",
+    title: "专注东方熟龄肌男士护理",
+    subtitle: "成熟男性需要的不是复杂步骤，而是一套能长期执行的日常护理。",
     status: "published",
     items: [
       {
         id: "story",
-        title: "品牌故事",
-        body:
-          "东面山从熟龄男性真实护肤困境出发：工作节奏快、剃须频繁、熬夜通勤多、护肤知识门槛高。品牌希望用更清晰的产品结构和更稳妥的配方逻辑，帮助他们建立低负担的护肤习惯。",
+        title: "品牌理念",
+        body: "东面山从熟龄男性的真实需求出发，让理解护肤、选择产品和建立习惯都更简单。",
       },
       {
         id: "research",
-        title: "研发理念",
-        body:
-          "以温和清洁、补水修护、屏障强韧为基础，再围绕暗沉、细纹、松弛和疲惫感做针对性表达。后续品牌部门可继续补充真实研发资料、备案信息和功效测试内容。",
+        title: "研发与原料",
+        body: "从清洁、补水、保湿的基础需求开始，把原料与产品讲清楚。",
       },
     ],
   },
-  "skin-test": {
-    key: "skin-test",
-    title: "找到适合你的三步护肤程序",
-    eyebrow: "肌肤测试",
-    subtitle:
-      "通过肤质、剃须频率、出油情况、干纹暗沉、使用场景，最终推荐产品组合和文章内容。",
+  purchase: {
+    key: "purchase",
+    eyebrow: "官方购买",
+    title: "了解清楚，直接购买",
+    subtitle: "通过下方产品链接进入原有官方购买渠道。",
     status: "published",
-    items: ["清洁后是否紧绷", "剃须后是否泛红", "白天是否容易出油", "是否关注细纹轮廓"].map((title) => ({
-      id: title,
-      title,
-    })),
+    items: [],
+  },
+  contact: {
+    key: "contact",
+    eyebrow: "联系我们",
+    title: "品牌咨询与售后",
+    subtitle: "联系方式正在完善，也可先通过官方购买渠道联系店铺客服。",
+    ctaLabel: "进入官方购买",
+    ctaUrl: "/goumai",
+    status: "published",
+    items: [],
+  },
+  faq: {
+    key: "faq",
+    eyebrow: "常见问题",
+    title: "选择与使用前，先了解这些",
+    status: "published",
+    items: [
+      {
+        id: "order",
+        title: "三款产品的使用顺序是什么？",
+        body: "洁面慕斯、精华水、精华乳，按清洁、补水、保湿的顺序了解。具体用量和频次请以包装说明为准。",
+        ctaLabel: "查看产品说明",
+        ctaUrl: "/chanpin",
+      },
+      {
+        id: "buy",
+        title: "在哪里购买？",
+        body: "产品详情页和官方购买页均可直接进入购买链接。",
+        ctaLabel: "官方购买",
+        ctaUrl: "/goumai",
+      },
+    ],
   },
 };
-
-export function getFallbackSection(key: SiteSectionKey) {
-  return fallbackSections[key];
+export const getFallbackSection = (key: SiteSectionKey) =>
+  fallbackSections[key];
+export async function getPublishedSiteSection(
+  key: SiteSectionKey,
+): Promise<SiteSectionContent> {
+  if (!process.env.DATABASE_URL) return getFallbackSection(key);
+  const section = await prisma.siteSection.findUnique({ where: { key } });
+  if (!section) return getFallbackSection(key);
+  if (section.status !== "published") {
+    const { getSiteCopy } = await import("./site-copy");
+    const copy = await getSiteCopy();
+    return {
+      key,
+      title: copy["empty.page"],
+      eyebrow: getSectionConfig(key)?.label,
+      status: "draft",
+      items: [],
+    };
+  }
+  const content = toSectionContent(section);
+  return { ...content, items: content.items.filter((item) => !item.deletedAt) };
 }
 
-export async function getPublishedSiteSection(key: SiteSectionKey) {
-  try {
-    const section = await prisma.siteSection.findUnique({
-      where: {
-        key,
-      },
-    });
-
-    if (!section || section.status !== "published") {
-      return getFallbackSection(key);
-    }
-
-    const content = toSectionContent(section);
-    return {
-      ...content,
-      items: liveItems(content.items),
-    };
-  } catch {
-    return getFallbackSection(key);
-  }
+export async function getSectionMetadata(
+  key: SiteSectionKey,
+  canonical: string,
+) {
+  const { getSiteCopy } = await import("./site-copy");
+  const [section, copy] = await Promise.all([
+    getPublishedSiteSection(key),
+    getSiteCopy(),
+  ]);
+  return {
+    title: `${section.title} - ${copy["brand.name"]}`,
+    description: section.subtitle || undefined,
+    alternates: { canonical },
+  };
 }

@@ -1,16 +1,23 @@
 {
   "name": "dongmianshan-next",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build --webpack",
+    "build": "prisma generate && node scripts/prepare-production.mjs && next build --webpack",
     "start": "next start",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:push": "prisma db push",
     "prisma:studio": "prisma studio",
-    "articles:remap-categories": "node scripts/remap-article-categories.mjs"
+    "articles:remap-categories": "node scripts/remap-article-categories.mjs",
+    "local:setup": "node scripts/local-preview.mjs",
+    "content:seed": "tsx scripts/seed-examples.ts",
+    "check": "tsc --noEmit",
+    "test:smoke": "node --env-file=.env.local --import tsx scripts/smoke-check.ts",
+    "test:links": "node scripts/check-links.mjs",
+    "prestart": "node scripts/prepare-production.mjs",
+    "test:editability": "node --env-file=.env.local --import tsx scripts/editability-check.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.18.0",
@@ -20,7 +27,10 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "sanitize-html": "^2.17.3",
-    "zod": "^4.3.6"
+    "sharp": "^0.34.5",
+    "zod": "^4.3.6",
+    "tsx": "^4.23.15",
+    "@next/env": "16.2.1"
   },
   "devDependencies": {
     "@types/node": "22.15.3",

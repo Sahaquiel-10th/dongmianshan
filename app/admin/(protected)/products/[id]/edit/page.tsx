@@ -1,3 +1,5 @@
+import { IncomingLinks } from "@/components/admin/incoming-links";
+import { stringList } from "@/lib/content-fields";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductForm } from "@/components/admin/product-form";
@@ -10,10 +12,14 @@ type EditProductPageProps = {
 };
 
 function jsonListToText(value: unknown) {
-  return Array.isArray(value) ? value.filter((item) => typeof item === "string").join("\n") : "";
+  return Array.isArray(value)
+    ? value.filter((item) => typeof item === "string").join("\n")
+    : "";
 }
 
-export default async function EditProductPage({ params }: EditProductPageProps) {
+export default async function EditProductPage({
+  params,
+}: EditProductPageProps) {
   const { id } = await params;
   const product = await prisma.product.findUnique({
     where: {
@@ -28,6 +34,11 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
       routineStep: true,
       coverImage: true,
       shopUrl: true,
+      usage: true,
+      features: true,
+      ingredients: true,
+      relatedArticleIds: true,
+      isExample: true,
       benefits: true,
       scenes: true,
       seoTitle: true,
@@ -54,10 +65,19 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
         </Link>
       </div>
 
+      <IncomingLinks
+        productSlug={product.slug}
+        ownArticleIds={stringList(product.relatedArticleIds)}
+      />
       <ProductForm
         mode="edit"
         productId={product.id}
         initialValues={{
+          usage: product.usage ?? "",
+          features: product.features ?? "",
+          ingredients: product.ingredients ?? "",
+          relatedArticleIds: jsonListToText(product.relatedArticleIds),
+          isExample: product.isExample,
           name: product.name,
           slug: product.slug,
           subtitle: product.subtitle ?? "",

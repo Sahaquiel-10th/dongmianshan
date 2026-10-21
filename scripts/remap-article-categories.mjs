@@ -1,4 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import prismaPackage from "@prisma/client";
+const { PrismaClient } = prismaPackage;
 
 const prisma = new PrismaClient();
 
@@ -12,6 +13,7 @@ const CATEGORY_MAP = new Map([
 ]);
 
 const VALID_CATEGORIES = new Set([
+  "core-ingredients",
   "other",
   "audience-awareness",
   "usage-guide",

@@ -1,9 +1,9 @@
+import { getSiteCopy } from "./site-copy";
 import type { Metadata } from "next";
 import type { Prisma } from "@prisma/client";
-import { marked } from "marked";
-import sanitizeHtml from "sanitize-html";
 import { notFound } from "next/navigation";
 import { z } from "zod";
+import { referenceList } from "./content-fields";
 import { MOCK_PUBLISHED_ARTICLES } from "./mock-content";
 import { prisma } from "./prisma";
 import {
@@ -36,7 +36,8 @@ const optionalNullableDate = z.preprocess((value) => {
   }
 
   if (typeof value === "string") {
-    const normalized = value.includes("T") && value.length === 16 ? `${value}:00` : value;
+    const normalized =
+      value.includes("T") && value.length === 16 ? `${value}:00` : value;
     const parsed = new Date(normalized);
 
     if (!Number.isNaN(parsed.getTime())) {
@@ -48,8 +49,14 @@ const optionalNullableDate = z.preprocess((value) => {
 }, z.date().nullable().optional());
 
 export const articleInputSchema = z.object({
+  relatedProductSlugs: referenceList,
+  isExample: z.coerce.boolean().default(false),
   code: optionalTrimmedString,
-  title: z.string().trim().min(1, "标题不能为空").max(200, "标题不能超过 200 个字符"),
+  title: z
+    .string()
+    .trim()
+    .min(1, "标题不能为空")
+    .max(200, "标题不能超过 200 个字符"),
   slug: z
     .string()
     .trim()
@@ -65,20 +72,7 @@ export const articleInputSchema = z.object({
   tags: optionalTrimmedString,
   seoTitle: optionalTrimmedString,
   seoDescription: optionalTrimmedString,
-  relatedArticleIds: z.preprocess((value) => {
-    if (Array.isArray(value)) {
-      return value.filter((item): item is string => typeof item === "string" && item.trim().length > 0);
-    }
-
-    if (typeof value === "string") {
-      return value
-        .split(/[\n,，]/)
-        .map((item) => item.trim())
-        .filter(Boolean);
-    }
-
-    return [];
-  }, z.array(z.string().trim().min(1)).max(5, "相关内容最多指定 5 篇")).optional(),
+  relatedArticleIds: referenceList,
   status: z.enum(ARTICLE_STATUS_VALUES, {
     error: "状态只能是 draft 或 published",
   }),
@@ -112,7 +106,9 @@ export function normalizeArticleInput(input: unknown): ArticleInput {
   return {
     ...parsed,
     publishedAt:
-      parsed.status === "published" ? parsed.publishedAt ?? new Date() : parsed.publishedAt ?? null,
+      parsed.status === "published"
+        ? (parsed.publishedAt ?? new Date())
+        : (parsed.publishedAt ?? null),
   };
 }
 
@@ -150,10 +146,14 @@ export function parseArticleTags(tags: string | null | undefined) {
 }
 
 export function listFromJsonString(value: Prisma.JsonValue | null | undefined) {
-  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string")
+    : [];
 }
 
-export function serializeRelatedArticleIds(value: Prisma.JsonValue | null | undefined) {
+export function serializeRelatedArticleIds(
+  value: Prisma.JsonValue | null | undefined,
+) {
   return listFromJsonString(value).join("\n");
 }
 
@@ -165,54 +165,7 @@ function textExcerpt(value: string, maxLength = 150) {
     .slice(0, maxLength);
 }
 
-marked.setOptions({
-  gfm: true,
-  breaks: true,
-});
-
-export function renderArticleMarkdown(content: string) {
-  const rawHtml = marked.parse(content, { async: false });
-
-  return sanitizeHtml(rawHtml, {
-    allowedTags: [
-      "h1",
-      "h2",
-      "h3",
-      "h4",
-      "h5",
-      "h6",
-      "p",
-      "br",
-      "strong",
-      "em",
-      "blockquote",
-      "ul",
-      "ol",
-      "li",
-      "code",
-      "pre",
-      "hr",
-      "a",
-      "table",
-      "thead",
-      "tbody",
-      "tr",
-      "th",
-      "td",
-    ],
-    allowedAttributes: {
-      a: ["href", "title", "target", "rel"],
-      code: ["class"],
-    },
-    allowedSchemes: ["http", "https", "mailto"],
-    transformTags: {
-      a: sanitizeHtml.simpleTransform("a", {
-        rel: "nofollow noreferrer noopener",
-        target: "_blank",
-      }),
-    },
-  });
-}
+export { renderArticleMarkdown } from "./article-markdown";
 
 export function getPublishedCategoryBySlug(category: string) {
   if (!isArticleCategorySlug(category)) {
@@ -223,12 +176,16 @@ export function getPublishedCategoryBySlug(category: string) {
 }
 
 function shouldUseMockContent() {
-  return process.env.NODE_ENV === "development" && !process.env.DATABASE_URL;
+  return !process.env.DATABASE_URL;
 }
 
-export async function getPublishedArticlesByCategory(category: ArticleCategorySlug) {
+export async function getPublishedArticlesByCategory(
+  category: ArticleCategorySlug,
+) {
   if (shouldUseMockContent()) {
-    return MOCK_PUBLISHED_ARTICLES.filter((article) => article.category === category);
+    return MOCK_PUBLISHED_ARTICLES.filter(
+      (article) => article.category === category,
+    );
   }
 
   return prisma.article.findMany({
@@ -270,10 +227,15 @@ export async function getLatestPublishedArticles(limit = 4) {
   });
 }
 
-export async function getPublishedArticleBySlug(category: ArticleCategorySlug, slug: string) {
+export async function getPublishedArticleBySlug(
+  category: ArticleCategorySlug,
+  slug: string,
+) {
   if (shouldUseMockContent()) {
     return (
-      MOCK_PUBLISHED_ARTICLES.find((article) => article.category === category && article.slug === slug) ?? null
+      MOCK_PUBLISHED_ARTICLES.find(
+        (article) => article.category === category && article.slug === slug,
+      ) ?? null
     );
   }
 
@@ -293,51 +255,21 @@ export async function getRelatedArticles(article: {
   tags: string | null;
   relatedArticleIds?: Prisma.JsonValue | null;
 }) {
-  if (shouldUseMockContent()) {
-    return MOCK_PUBLISHED_ARTICLES.filter((item) => item.id !== article.id).slice(0, 4);
-  }
-
-  const selectedIds = listFromJsonString(article.relatedArticleIds).slice(0, 5);
-
-  if (selectedIds.length > 0) {
-    const selected = await prisma.article.findMany({
-      where: {
-        id: {
-          in: selectedIds,
-        },
-        status: "published",
-        deletedAt: null,
-      },
-    });
-    const byId = new Map(selected.map((item) => [item.id, item]));
-    return selectedIds
-      .map((id) => byId.get(id))
-      .filter((item): item is NonNullable<typeof item> => Boolean(item))
-      .slice(0, 5);
-  }
-
-  const tags = parseArticleTags(article.tags);
-  const sameCategory = await prisma.article.findMany({
-    where: {
-      id: {
-        not: article.id,
-      },
-      category: article.category,
-      status: "published",
-      deletedAt: null,
-    },
-    orderBy: [{ publishedAt: "desc" }, { updatedAt: "desc" }],
-    take: 8,
-  });
-
-  return sameCategory
-    .map((item) => ({
-      item,
-      score: parseArticleTags(item.tags).filter((tag) => tags.includes(tag)).length,
-    }))
-    .sort((a, b) => b.score - a.score)
-    .map(({ item }) => item)
-    .slice(0, 4);
+  const all = await getAllPublishedArticles();
+  const ids = listFromJsonString(article.relatedArticleIds);
+  return all
+    .filter(
+      (item) =>
+        item.id !== article.id &&
+        (ids.includes(item.id) ||
+          listFromJsonString(item.relatedArticleIds).includes(article.id)),
+    )
+    .sort((a, b) => {
+      const rank = (id: string) =>
+        ids.includes(id) ? ids.indexOf(id) : ids.length;
+      return rank(a.id) - rank(b.id);
+    })
+    .slice(0, 12);
 }
 
 export async function getAdjacentPublishedArticles(article: {
@@ -346,10 +278,15 @@ export async function getAdjacentPublishedArticles(article: {
   updatedAt: Date;
 }) {
   if (shouldUseMockContent()) {
-    const index = MOCK_PUBLISHED_ARTICLES.findIndex((item) => item.id === article.id);
+    const index = MOCK_PUBLISHED_ARTICLES.findIndex(
+      (item) => item.id === article.id,
+    );
     return {
       previous: index > 0 ? MOCK_PUBLISHED_ARTICLES[index - 1] : null,
-      next: index >= 0 && index < MOCK_PUBLISHED_ARTICLES.length - 1 ? MOCK_PUBLISHED_ARTICLES[index + 1] : null,
+      next:
+        index >= 0 && index < MOCK_PUBLISHED_ARTICLES.length - 1
+          ? MOCK_PUBLISHED_ARTICLES[index + 1]
+          : null,
     };
   }
 
@@ -372,7 +309,8 @@ export async function getAdjacentPublishedArticles(article: {
 
   return {
     previous: index > 0 ? articles[index - 1] : null,
-    next: index >= 0 && index < articles.length - 1 ? articles[index + 1] : null,
+    next:
+      index >= 0 && index < articles.length - 1 ? articles[index + 1] : null,
   };
 }
 
@@ -380,6 +318,7 @@ export async function getPublishedArticleMetadata(
   category: ArticleCategorySlug,
   slug: string,
 ): Promise<Metadata> {
+  const copy = await getSiteCopy();
   const article = await getPublishedArticleBySlug(category, slug);
 
   if (!article) {
@@ -387,8 +326,11 @@ export async function getPublishedArticleMetadata(
   }
 
   const description =
-    article.seoDescription ?? article.summary ?? textExcerpt(article.content) ?? `${article.title} - 东面山内容中心`;
-  const title = article.seoTitle ?? `${article.title} - 东面山内容中心`;
+    article.seoDescription ??
+    article.summary ??
+    textExcerpt(article.content) ??
+    `${article.title} - ${copy["brand.name"]}`;
+  const title = article.seoTitle ?? `${article.title} - ${copy["brand.name"]}`;
 
   return {
     title,

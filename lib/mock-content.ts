@@ -1,152 +1,110 @@
-import type { Article, ArticleStatus } from "@prisma/client";
+import type { Article } from "@prisma/client";
 import type { ArticleCategorySlug } from "./categories";
-
-const now = new Date("2026-04-29T10:00:00.000Z");
-
-function createMockArticle(input: {
-  id: string;
-  title: string;
-  slug: string;
-  summary: string;
-  content: string;
-  category: ArticleCategorySlug;
-  tags?: string;
-  seoTitle?: string;
-  seoDescription?: string;
-}): Article {
+const now = new Date("2026-10-21T02:00:00.000Z");
+function example(
+  id: string,
+  category: ArticleCategorySlug,
+  slug: string,
+  title: string,
+  summary: string,
+  content: string,
+  tags: string,
+  relatedArticleIds: string[] = [],
+  relatedProductSlugs: string[] = [],
+): Article {
   return {
-    id: input.id,
-    code: input.id.replace(/^mock-/, "").toUpperCase(),
-    title: input.title,
-    slug: input.slug,
-    summary: input.summary,
-    content: input.content,
+    id,
+    category,
+    slug,
+    title,
+    summary,
+    content,
+    tags,
+    relatedArticleIds,
+    relatedProductSlugs,
+    code: null,
     coverImage: null,
-    category: input.category,
-    tags: input.tags ?? null,
-    seoTitle: input.seoTitle ?? null,
-    seoDescription: input.seoDescription ?? null,
-    relatedArticleIds: [],
-    status: "published" as ArticleStatus,
-    author: "东面山内容编辑部",
+    seoTitle: null,
+    seoDescription: null,
+    author: "东面山",
+    isExample: true,
+    status: "published",
     publishedAt: now,
-    deletedAt: null,
     createdAt: now,
     updatedAt: now,
+    deletedAt: null,
   };
 }
-
 export const MOCK_PUBLISHED_ARTICLES: Article[] = [
-  createMockArticle({
-    id: "mock-science-1",
-    title: "熟龄男士护肤为什么要先看屏障状态",
-    slug: "mature-skin-barrier-guide",
-    summary: "从屏障、清洁、保湿三个角度，理解熟龄男士护肤的核心起点。",
-    category: "skincare-science",
-    tags: "屏障修护,熟龄护肤,男士科普",
-    seoTitle: "熟龄男士护肤为什么先看屏障状态",
-    seoDescription: "东面山科普内容：熟龄男士护肤为什么要优先评估皮肤屏障状态。",
-    content: `# 熟龄男士护肤为什么要先看屏障状态
-
-很多熟龄男士不是“没有在护肤”，而是**护肤顺序错了**。
-
-## 先判断是否是屏障问题
-
-- 洗完脸很快发紧
-- 剃须后容易刺痛
-- 天气一变就泛红
-
-如果这些情况长期存在，优先要做的是**减轻刺激、稳定屏障**，而不是一开始就叠加强功效产品。
-
-## 一个更稳妥的三步思路
-
-1. 温和清洁
-2. 及时补水
-3. 持续锁水和修护
-
-> 先把皮肤状态稳住，再谈提亮、淡纹、紧致，效率会更高。
-`,
-  }),
-  createMockArticle({
-    id: "mock-review-1",
-    title: "三步护肤方案是否适合工作繁忙的熟龄男性",
-    slug: "three-step-routine-review",
-    summary: "从执行成本、肤感和稳定性角度，评估精简护肤方案是否足够实用。",
-    category: "product-description",
-    tags: "产品评测,三步护肤,效率护肤",
-    content: `# 三步护肤方案是否适合工作繁忙的熟龄男性
-
-对于节奏快的用户，复杂流程通常坚持不下来。
-
-## 为什么三步方案更容易长期执行
-
-- 上手门槛低
-- 早晚流程一致
-- 更容易观察皮肤变化
-
-## 评测结论
-
-如果你的目标是**稳定、长期、低负担**，三步方案通常比堆很多单品更合适。`,
-  }),
-  createMockArticle({
-    id: "mock-tutorial-1",
-    title: "早晚护肤步骤怎么排才不浪费",
-    slug: "morning-evening-routine-tutorial",
-    summary: "给首次建立护肤习惯的熟龄男士一份可执行的早晚顺序参考。",
-    category: "usage-guide",
-    tags: "护肤教程,使用顺序,新手指南",
-    content: `# 早晚护肤步骤怎么排才不浪费
-
-## 早上
-
-1. 洁面
-2. 精华水
-3. 精华乳
-
-## 晚上
-
-1. 洁面
-2. 精华水
-3. 精华乳
-
-核心不是步骤多，而是**稳定持续**。`,
-  }),
-  createMockArticle({
-    id: "mock-faq-1",
-    title: "FAQ：男士护肤一定要分早晚两套吗",
-    slug: "faq-do-men-need-separate-routines",
-    summary: "回答熟龄男士护肤里最常见的流程问题，降低上手门槛。",
-    category: "problem-solving",
-    tags: "FAQ,护肤流程,男士护理",
-    content: `# FAQ：男士护肤一定要分早晚两套吗
-
-不一定。
-
-如果你是刚开始建立习惯，先用一套**简单、可坚持**的流程更重要。
-
-只有在夜间修护需求明显增加时，再考虑做针对性区分。`,
-  }),
-  createMockArticle({
-    id: "mock-case-1",
-    title: "案例：从剃须后泛红到状态稳定的 4 周调整",
-    slug: "case-shaving-redness-recovery",
-    summary: "一个简化的内容示例，展示案例型文章在前台的呈现方式。",
-    category: "other",
-    tags: "案例,剃须敏感,修护记录",
-    content: `# 案例：从剃须后泛红到状态稳定的 4 周调整
-
-## 初始问题
-
-- 剃须后明显泛红
-- 两颊紧绷
-- 偶发起皮
-
-## 调整重点
-
-1. 减少刺激型清洁
-2. 强化补水
-3. 固定修护节奏
-
-四周后，皮肤状态通常会比“今天用这个、明天换那个”的方式更稳定。`,
-  }),
+  example(
+    "example-mature",
+    "audience-awareness",
+    "mature-men-35",
+    "35 岁，先从自己的肌肤状态出发",
+    "从年龄定位走向当下需求，再了解原料与产品。",
+    "## 认识自己的需求\n年龄是一个入口，还需要结合自己的出油、干燥与使用习惯。\n\n## 从这里继续\n例如关注晨间出油，可继续阅读下方关联的需求页面，了解清洁与补水的关系。",
+    "35岁,三十五岁,熟龄肌,男士,早上,出油,补水",
+    ["example-oil", "example-amino", "example-ginseng"],
+  ),
+  example(
+    "example-oil",
+    "problem-solving",
+    "morning-oil-and-hydration",
+    "早上脸上油，护理该怎么选？",
+    "示例路径：熟龄男士 → 晨间出油 → 清洁与补水 → 三步产品。",
+    "## 不只看清洁这一步\n这一页示范如何把晨间出油的需求，与清洁、补水、保湿步骤连接起来。\n\n## 接着了解什么\n下方可以了解氨基酸原料知识、查看使用步骤及产品基础介绍。具体护理建议待品牌审核补充。",
+    "早上,出油,油,补水,35岁,三十五岁,熟龄肌",
+    ["example-mature", "example-amino", "mock-tutorial-1"],
+    ["jie-mian-mu-si", "jing-hua-shui", "jing-hua-ru"],
+  ),
+  example(
+    "example-amino",
+    "core-ingredients",
+    "amino-acids",
+    "氨基酸：从原料理解清洁",
+    "原料是什么、在配方中发挥什么作用、与谁的需求相关。",
+    "## 是什么\n氨基酸是本次会议提到的原料知识主题。正式介绍待品牌依据具体原料资料补充。\n\n## 与熟龄男士有什么关系\n这里将说明该类原料在具体配方中的作用，以及与清洁需求的关系。\n\n## 功效与产品应用\n待补充原料依据和实际产品成分表。关联产品仅演示浏览路径，不代表已添加该成分或具备特定功效。",
+    "氨基酸,清洁,出油,熟龄肌",
+    ["example-oil", "example-mature"],
+  ),
+  example(
+    "example-ginseng",
+    "core-ingredients",
+    "ginsenosides",
+    "人参皂苷：认识原料与配方",
+    "从是什么、作用依据，到与熟龄肌需求的关系。",
+    "## 是什么\n人参皂苷是会议提出的原料展示主题，具体来源和介绍待品牌补充。\n\n## 与人群的关系\n这里将说明与熟龄男士护理需求的联系，并注明适用边界。\n\n## 功效依据与产品应用\n待品牌提供成分表及资料后完善。当前不作已添加或功效承诺。",
+    "人参皂苷,熟龄肌,原料",
+    ["example-mature"],
+  ),
+  example(
+    "mock-tutorial-1",
+    "usage-guide",
+    "morning-evening-routine-tutorial",
+    "把三步护理放进早晚日常",
+    "清洁、补水、保湿，各自承担一步。",
+    "## 三步顺序\n1. 洁面慕斯：清洁。\n2. 精华水：补水。\n3. 精华乳：保湿护理。\n\n各产品用量、频次和注意事项以实际包装说明为准，品牌可在此补充正式使用方法。",
+    "步骤,早晚,使用方法",
+    ["example-oil"],
+    ["jie-mian-mu-si", "jing-hua-shui", "jing-hua-ru"],
+  ),
+  example(
+    "mock-science-1",
+    "skincare-science",
+    "mature-skin-barrier-guide",
+    "了解肌肤状态，再建立护理习惯",
+    "让清洁与保湿的知识连接到日常护理。",
+    "## 先了解，再选择\n记录自己的肤感、使用习惯和当下需求。\n\n## 理解护理步骤\n本页预留肌肤屏障、清洁与保湿知识，正式科普待审核补充。",
+    "屏障,熟龄肌,保湿",
+    ["example-mature", "mock-tutorial-1"],
+  ),
+  example(
+    "example-brand",
+    "brand-introduction",
+    "simple-care",
+    "让熟龄男士护理更简单",
+    "从人群与需求出发，把产品讲清楚。",
+    "## 品牌理念\n专注东方熟龄肌男士护理，让理解产品、建立护理习惯和购买都更简单。\n\n品牌背景与研发资料待品牌补充。",
+    "品牌,理念",
+  ),
 ];
