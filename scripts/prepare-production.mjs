@@ -68,7 +68,7 @@ try {
     const result = await db.article.updateMany({ where: { category: previous }, data: { category: next } });
     if (result.count) console.log(`[prepare] Mapped ${result.count} legacy articles: ${previous} -> ${next}`);
   }
-  // Seed is insert-only and uses actual IDs if an article already exists under the same slug.
+  // Seed reuses existing product URLs and only folds untouched duplicate examples once.
   const seed = spawnSync(
     process.execPath,
     ["--import", "tsx", "scripts/seed-examples.ts"],

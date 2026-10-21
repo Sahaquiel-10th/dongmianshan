@@ -8,7 +8,7 @@ export function ExampleImport() {
   return (
     <div>
       <p>
-        首次搭建时可补齐示例页面。只创建尚不存在的内容，保留已有编辑、草稿和删除状态；示例可在对应后台编辑或删除。
+        首次搭建时可补齐示例页面。优先使用已有产品，保留已有编辑、草稿和删除状态；重复且未修改的产品示例会归并为草稿，示例可在对应后台编辑或删除。
       </p>
       <button
         className="cms-admin-button"

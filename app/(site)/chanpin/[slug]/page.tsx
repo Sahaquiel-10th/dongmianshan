@@ -1,8 +1,8 @@
 import { getSiteCopy } from "@/lib/site-copy";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
-import { getPublishedProductBySlug } from "@/lib/products";
+import { getPublishedProductBySlug, getMergedProductRedirect } from "@/lib/products";
 import { getProductKnowledge } from "@/lib/knowledge";
 import {
   Breadcrumbs,
@@ -23,8 +23,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 export default async function ProductPage({ params }: Props) {
   const copy = await getSiteCopy();
-  const product = await getPublishedProductBySlug((await params).slug);
-  if (!product) notFound();
+  const { slug } = await params;
+  const product = await getPublishedProductBySlug(slug);
+  if (!product) {
+    const target = await getMergedProductRedirect(slug);
+    if (target) permanentRedirect(`/chanpin/${target}`);
+    notFound();
+  }
   const knowledge = await getProductKnowledge(product);
   const ingredients = knowledge.filter(
     (x) => x.category === "core-ingredients",

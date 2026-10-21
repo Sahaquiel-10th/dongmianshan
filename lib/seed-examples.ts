@@ -3,11 +3,13 @@ import { prisma } from "./prisma";
 import { MOCK_PUBLISHED_ARTICLES } from "./mock-content";
 import { fallbackSiteProducts } from "./products";
 import { fallbackSections } from "./site-sections";
+import { reconcileProductExamples } from "./product-example-merge";
 
-// Only insert missing records; preserve all existing editorial and deletion states.
+// Insert missing records and fold only proven, untouched duplicate samples once.
 export async function seedExamples() {
   return prisma.$transaction(
     async (tx) => {
+      const { aliases: productAliases, merged: mergedProductExamples } = await reconcileProductExamples(tx);
       const idMap = new Map<string, string>();
       const created: typeof MOCK_PUBLISHED_ARTICLES = [];
       for (const a of MOCK_PUBLISHED_ARTICLES) {
@@ -20,7 +22,7 @@ export async function seedExamples() {
             data: {
               ...a,
               relatedArticleIds: [],
-              relatedProductSlugs: stringList(a.relatedProductSlugs),
+              relatedProductSlugs: stringList(a.relatedProductSlugs).map(slug => productAliases.get(slug) ?? slug),
             },
           });
           idMap.set(a.id, row.id);
@@ -35,6 +37,7 @@ export async function seedExamples() {
           data: { relatedArticleIds: references(a.relatedArticleIds) },
         });
       for (const [index, p] of fallbackSiteProducts().entries()) {
+        if (productAliases.has(p.slug)) continue;
         await tx.product.upsert({
           where: { slug: p.slug },
           update: {},
@@ -68,6 +71,7 @@ export async function seedExamples() {
       return {
         articles: created.length,
         sections: Object.keys(fallbackSections).length,
+        mergedProductExamples,
       };
     },
     { maxWait: 10000, timeout: 30000 },

@@ -176,3 +176,12 @@ export async function getPublishedProductBySlug(slug: string) {
   const products = await getPublishedProducts();
   return products.find((product) => product.slug === slug) ?? null;
 }
+
+export async function getMergedProductRedirect(slug: string) {
+  if (!process.env.DATABASE_URL || !["jie-mian-mu-si", "jing-hua-shui", "jing-hua-ru"].includes(slug)) return null;
+  const marker = await prisma.siteSection.findUnique({ where: { key: `example-product-merge:${slug}` } });
+  const items = marker?.items;
+  if (!items || Array.isArray(items) || typeof items !== "object" || typeof items.canonicalSlug !== "string") return null;
+  const target = await getPublishedProductBySlug(items.canonicalSlug);
+  return target?.slug ?? null;
+}
