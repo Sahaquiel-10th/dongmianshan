@@ -4,8 +4,8 @@ import Link from "next/link";
 import type { SiteSectionContent } from "@/lib/site-sections";
 import type { Article } from "@prisma/client";
 import type { SiteProduct } from "@/lib/products";
-import { getArticleCategoryLabel } from "@/lib/categories";
 import { articleHref } from "@/lib/knowledge";
+import { EditMarker, EditableCard } from "./editor-tools";
 export async function ExampleNote() {
   const copy = await getSiteCopy();
   return <p className="example-note">{copy["common.exampleNote"]}</p>;
@@ -25,6 +25,10 @@ export function SectionIntro({ section }: { section: SiteSectionContent }) {
       <SectionTags section={section} />
       {section.subtitle ? <p>{section.subtitle}</p> : null}
       {section.body ? <p className="preserve-lines">{section.body}</p> : null}
+      <EditMarker
+        href={`/admin/sections/${section.key}`}
+        label={section.title}
+      />
     </>
   );
 }
@@ -72,6 +76,10 @@ export async function SectionItems({
               {item.ctaLabel || copy["common.continue"]} →
             </Link>
           ) : null}
+          <EditMarker
+            href={`/admin/sections/${section.key}#item-${item.id}`}
+            label={item.title}
+          />
         </article>
       ))}
     </>
@@ -89,19 +97,26 @@ export async function KnowledgeCards({
   return (
     <div className="education-grid">
       {articles.map((a) => (
-        <Link
-          className="education-card knowledge-card"
+        <EditableCard
+          href={`/admin/articles/${a.id}/edit`}
+          label={a.title}
           key={a.id}
-          href={articleHref(a)}
+          article={a}
         >
-          <span>
-            {categoryCopy(copy, a.category)}
-            {a.isExample ? ` · ${copy["common.example"]}` : ""}
-          </span>
-          <h3>{a.title}</h3>
-          {a.summary ? <p>{a.summary}</p> : null}
-          <span className="site-text-link">{copy["common.continue"]} →</span>
-        </Link>
+          <Link
+            className="education-card knowledge-card"
+            key={a.id}
+            href={articleHref(a)}
+          >
+            <span>
+              {categoryCopy(copy, a.category)}
+              {a.isExample ? ` · ${copy["common.example"]}` : ""}
+            </span>
+            <h3>{a.title}</h3>
+            {a.summary ? <p>{a.summary}</p> : null}
+            <span className="site-text-link">{copy["common.continue"]} →</span>
+          </Link>
+        </EditableCard>
       ))}
     </div>
   );
@@ -124,6 +139,11 @@ export async function ProductCards({ products }: { products: SiteProduct[] }) {
             <span>{p.subtitle}</span>
             {p.isExample ? <ExampleNote /> : null}
             <Link href={`/chanpin/${p.slug}`}>{copy["common.product"]} →</Link>
+          <EditMarker
+            href={p.id ? `/admin/products/${p.id}/edit` : "/admin/products"}
+            label={p.name}
+          />
+
           </div>
         </article>
       ))}

@@ -16,7 +16,11 @@ export default async function AdminProductsPage() {
 
   try {
     products = await prisma.product.findMany({
-      orderBy: [{ deletedAt: "asc" }, { sortOrder: "asc" }, { updatedAt: "desc" }],
+      orderBy: [
+        { deletedAt: "asc" },
+        { sortOrder: "asc" },
+        { updatedAt: "desc" },
+      ],
       select: {
         id: true,
         name: true,
@@ -45,9 +49,11 @@ export default async function AdminProductsPage() {
         ...product,
         deletedAt: null,
       }));
-      setupError = "数据库还没有同步 deletedAt 字段，产品可查看编辑，但删除恢复功能需要先执行 npm run prisma:push。";
+      setupError =
+        "数据库还没有同步 deletedAt 字段，产品可查看编辑，但删除恢复功能需要先执行 npm run prisma:push。";
     } catch {
-      setupError = "产品表暂时无法读取。通常是线上数据库还没有同步 Product 表，请先执行 npm run prisma:push。";
+      setupError =
+        "产品表暂时无法读取。通常是线上数据库还没有同步 Product 表，请先执行 npm run prisma:push。";
     }
   }
 
@@ -56,8 +62,10 @@ export default async function AdminProductsPage() {
       <div className="cms-admin-panel-header">
         <div>
           <p className="cms-admin-eyebrow">Products</p>
-          <h2>产品一览</h2>
-          <p>管理产品图、卖点、场景、购买链接和 SEO 信息。</p>
+          <h2>全部产品资料</h2>
+          <p>
+            一份资料同步用于产品卡片、详情和购买入口。排序靠前的三款已发布产品会出现在首页。
+          </p>
         </div>
       </div>
 

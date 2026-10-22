@@ -1,6 +1,8 @@
 import { categoryCopy } from "@/lib/site-copy-config";
 import { getSiteCopy } from "@/lib/site-copy";
 import Link from "next/link";
+import { ArticleActions, EditableCard } from "@/components/site/editor-tools";
+import { getEditorPage, editorPageName } from "@/lib/editor-map";
 import { notFound, redirect } from "next/navigation";
 import { getKnowledgeProducts } from "@/lib/knowledge";
 import {
@@ -73,6 +75,9 @@ export default async function ArticleDetailPage({
   }
 
   const categoryItem = getPublishedCategoryBySlug(article.category);
+  const parent =
+    getEditorPage(getEditorPage(article.category)?.group ?? "care") ??
+    getEditorPage("care")!;
   const tags = parseArticleTags(article.tags);
   const [relatedArticles, adjacentArticles, products] = await Promise.all([
     getRelatedArticles(article),
@@ -86,7 +91,7 @@ export default async function ArticleDetailPage({
         <div className="cms-content-container">
           <Breadcrumbs
             items={[
-              { label: copy["nav.care"], href: "/hufuzhishi" },
+              { label: editorPageName(parent, copy), href: parent.path },
               {
                 label: categoryCopy(copy, categoryItem.slug),
                 href: `/${article.category}`,
@@ -142,6 +147,7 @@ export default async function ArticleDetailPage({
 
           {article.isExample ? <ExampleNote /> : null}
           <ArticleBody content={article.content} />
+          <ArticleActions article={{ id: article.id, title: article.title, category: article.category, slug: article.slug }} />
           {products.length ? (
             <section className="cms-content-related">
               <h2>{copy["article.products"]}</h2>
@@ -179,19 +185,15 @@ export default async function ArticleDetailPage({
               </div>
               <div className="cms-content-grid">
                 {relatedArticles.map((item) => (
-                  <Link
-                    className="cms-content-card"
-                    key={item.id}
-                    href={`/${item.category}/${item.slug}`}
-                  >
-                    <div className="cms-content-card-meta">
-                      <span>{formatArticleDate(item.publishedAt)}</span>
-                    </div>
-                    <h3 className="cms-content-card-title">{item.title}</h3>
-                    {item.summary ? (
-                      <p className="cms-content-card-summary">{item.summary}</p>
-                    ) : null}
-                  </Link>
+                  <EditableCard key={item.id} href={`/admin/articles/${item.id}/edit`} label={item.title} article={{ id: item.id, title: item.title, category: item.category, slug: item.slug }}>
+                    <Link className="cms-content-card" href={`/${item.category}/${item.slug}`}>
+                      <div className="cms-content-card-meta">
+                        <span>{formatArticleDate(item.publishedAt)}</span>
+                      </div>
+                      <h3 className="cms-content-card-title">{item.title}</h3>
+                      {item.summary ? <p className="cms-content-card-summary">{item.summary}</p> : null}
+                    </Link>
+                  </EditableCard>
                 ))}
               </div>
             </section>

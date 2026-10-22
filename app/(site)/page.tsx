@@ -12,6 +12,7 @@ import {
   SectionTags,
 } from "@/components/site/content";
 import { navItems } from "@/lib/homepage";
+import { EditMarker } from "@/components/site/editor-tools";
 export default async function Page() {
   const copy = await getSiteCopy();
   const [products, hero, productIntro, ingredientIntro, ingredients] =
@@ -39,7 +40,11 @@ export default async function Page() {
       : [];
   return (
     <main className="brand-site-shell">
-      <section className="homepage-hero" aria-label="品牌海报">
+      <section
+        className="homepage-hero"
+        aria-label="品牌海报"
+        id="homepage-hero"
+      >
         <div className="hero-carousel">
           {slides.length ? (
             slides.map((s, i) => (
@@ -71,6 +76,7 @@ export default async function Page() {
                       </Link>
                     ) : null}
                   </div>
+                  <EditMarker href={s.id === "hero" ? "/admin/sections/homepage-hero" : `/admin/sections/homepage-hero#item-${s.id}`} label={s.title || "首页海报"} />
                 </div>
               </article>
             ))
@@ -79,6 +85,7 @@ export default async function Page() {
               <h1>{copy["brand.name"]}</h1>
               <p>{copy["empty.home"]}</p>
               <Link href="/chanpin">{copy["common.product"]} →</Link>
+              <EditMarker href="/admin/sections/homepage-hero" label="首页海报" />
             </div>
           )}
         </div>
@@ -92,6 +99,9 @@ export default async function Page() {
           </Link>
         ))}
       </nav>
+      <div className="site-container">
+        <EditMarker href="/admin/site-copy#copy-nav" label="首页四个导航入口" />
+      </div>
       {productIntro.status === "published" ? (
         <section className="site-section products-band" id="products">
           <div className="site-container">
@@ -116,6 +126,11 @@ export default async function Page() {
             )}
             <SectionItems section={productIntro} />
             <SectionLink section={productIntro} />
+          <EditMarker
+            href="/admin/sections/homepage-products"
+            label={productIntro.title}
+          />
+
           </div>
         </section>
       ) : null}
@@ -143,6 +158,11 @@ export default async function Page() {
             )}
             <SectionItems section={ingredientIntro} />
             <SectionLink section={ingredientIntro} />
+          <EditMarker
+            href="/admin/sections/homepage-ingredients"
+            label={ingredientIntro.title}
+          />
+
           </div>
         </section>
       ) : null}

@@ -53,15 +53,17 @@ export async function IncomingLinks({
   if (!links.length) return null;
   return (
     <aside className="cms-admin-alert cms-admin-alert-info">
-      <strong>其他内容建立的关联</strong>
-      <p>官网还会展示以下来源指向本页的关联。取消时，请进入对应来源编辑。</p>
-      {links.map((x) => (
-        <p key={x.href}>
-          <Link className="cms-content-link" href={x.href}>
-            {x.title} →
-          </Link>
-        </p>
-      ))}
+      <details>
+        <summary>其他内容引用了本页（{links.length} 项）</summary>
+        <p>官网还会展示以下来源指向本页的关联。取消时，请进入对应来源编辑。</p>
+        {links.map((x) => (
+          <p key={x.href}>
+            <Link className="cms-content-link" href={x.href}>
+              {x.title} →
+            </Link>
+          </p>
+        ))}
+      </details>
     </aside>
   );
 }

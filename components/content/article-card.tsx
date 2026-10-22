@@ -7,6 +7,7 @@ import {
   getPublishedCategoryBySlug,
   parseArticleTags,
 } from "@/lib/articles";
+import { ArticleActions } from "@/components/site/editor-tools";
 
 type ArticleCardProps = {
   article: Article;
@@ -55,6 +56,7 @@ export async function ArticleCard({ article }: ArticleCardProps) {
           {copy["common.read"]}
         </Link>
       </div>
+      <ArticleActions article={{ id: article.id, title: article.title, category: article.category, slug: article.slug }} />
     </article>
   );
 }

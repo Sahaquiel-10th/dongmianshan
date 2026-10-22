@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   COPY_GROUPS,
@@ -10,12 +10,39 @@ import {
   type SiteCopyKey,
 } from "@/lib/site-copy-config";
 import { ImageField } from "./image-field";
+const COPY_GROUP_LOCATIONS: Record<string, string> = {
+  "brand.": "每个页面左上角的品牌标识，以及搜索结果中的网站名称与简介。",
+  "nav.": "每个页面顶部导航、手机菜单，以及首页四个主入口。",
+  "footer.": "每个页面最底部的品牌说明和员工后台入口。",
+  "common.": "产品与文章卡片上的按钮、示例内容提示。",
+  "category.": "知识栏目列表、文章分类与当前位置中的名称。",
+  "product.": "所有产品详情页共用的小标题和购买按钮。",
+  "article.": "所有文章详情页底部的关联内容、上一篇、下一篇及作者日期标签。",
+  "search.": "搜索页面的输入框、按钮和搜索结果提示。",
+  "empty.": "没有已发布内容时显示的提示文字。",
+  "error.": "页面不存在或加载失败时显示的文字。",
+};
 export function SiteCopyForm({ initialValues }: { initialValues: SiteCopy }) {
   const [values, setValues] = useState(initialValues);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
+  useEffect(() => {
+    function focusGroup() {
+      const element = document.getElementById(window.location.hash.slice(1));
+      if (
+        element instanceof HTMLDetailsElement &&
+        element.classList.contains("copy-editor-group")
+      ) {
+        element.open = true;
+        element.scrollIntoView({ block: "start" });
+      }
+    }
+    focusGroup();
+    window.addEventListener("hashchange", focusGroup);
+    return () => window.removeEventListener("hashchange", focusGroup);
+  }, []);
   function change(key: SiteCopyKey, value: string) {
     setValues((current) => ({ ...current, [key]: value }));
     setMessage("");
@@ -46,7 +73,7 @@ export function SiteCopyForm({ initialValues }: { initialValues: SiteCopy }) {
       }}
     >
       <p className="cms-admin-alert cms-admin-alert-info">
-        这里管理全站共用文字和固定栏目名称；各页面的标题、说明、图片、标签请在对应页面或内容编辑。保存后直接发布，网址与页面布局保持不变。
+        以下文字由多个页面共用，修改后会一起更新。每组都标明了官网位置；页面自己的标题和图片请返回对应页面编辑。
       </p>
       {error ? (
         <p role="alert" className="cms-admin-alert cms-admin-alert-error">
@@ -70,10 +97,37 @@ export function SiteCopyForm({ initialValues }: { initialValues: SiteCopy }) {
       {COPY_GROUPS.map((group, index) => (
         <details
           className="copy-editor-group"
+          id={`copy-${group.prefix.slice(0, -1)}`}
           key={group.prefix}
           open={index < 2}
         >
           <summary>{group.label}</summary>
+          <p className="editor-copy-location">
+            对应官网：{COPY_GROUP_LOCATIONS[group.prefix]}
+          </p>
+          {group.prefix === "nav." ? (
+            <div className="editor-nav-preview">
+              <strong>{values["brand.name"]}</strong>
+              {["nav.brand", "nav.products", "nav.care", "nav.purchase"].map(
+                (key) => (
+                  <span key={key}>{values[key as SiteCopyKey]}</span>
+                ),
+              )}
+            </div>
+          ) : null}
+          {group.prefix === "nav." ? (
+            <p className="editor-copy-location">
+              产品子菜单中的名称取自产品资料：
+              <a href="/admin/pages/products">编辑对应产品名称 →</a>
+            </p>
+          ) : null}
+          {group.prefix === "footer." ? (
+            <div className="editor-footer-preview">
+              <strong>{values["brand.name"]}</strong>
+              <span>{values["footer.text"]}</span>
+              <span>{values["footer.admin"]}</span>
+            </div>
+          ) : null}
           <div className="cms-admin-form-grid">
             {SITE_COPY_KEYS.filter((key) => key.startsWith(group.prefix)).map(
               (key) =>

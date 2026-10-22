@@ -23,6 +23,8 @@ export function ReferencePicker({
   const [items, setItems] = useState<Item[]>([]);
   const [error, setError] = useState("");
   const [loaded, setLoaded] = useState(false);
+  const [query, setQuery] = useState("");
+  const [limit, setLimit] = useState(20);
   useEffect(() => {
     let active = true;
     fetch(`/api/${kind}`)
@@ -54,22 +56,58 @@ export function ReferencePicker({
   const unknown = loaded
     ? ids.filter((id) => !items.some((x) => keyOf(x) === id))
     : [];
+  const matches = items.filter(
+    (x) =>
+      x.id !== excludeId &&
+      (!x.deletedAt || ids.includes(keyOf(x))) &&
+      `${x.title ?? x.name ?? ""} ${x.slug}`
+        .toLowerCase()
+        .includes(query.trim().toLowerCase()),
+  );
   return (
-    <div className="reference-picker">
+    <div className="reference-picker editor-reference-picker">
+      <p className="editor-reference-count">已选择 {ids.length} 项</p>
+      {ids.length ? (
+        <div className="editor-reference-selected">
+          {ids.map((id) => (
+            <button
+              type="button"
+              key={id}
+              onClick={() => onChange(ids.filter((x) => x !== id).join("\n"))}
+              aria-label={`移除关联：${items.find((x) => keyOf(x) === id)?.title ?? items.find((x) => keyOf(x) === id)?.name ?? id}`}
+            >
+              {items.find((x) => keyOf(x) === id)?.title ??
+                items.find((x) => keyOf(x) === id)?.name ??
+                id}{" "}
+              ×
+            </button>
+          ))}
+        </div>
+      ) : null}
+      <label className="editor-reference-search">
+        查找要关联的{kind === "products" ? "产品" : "知识"}
+        <input
+          type="search"
+          value={query}
+          placeholder="输入标题关键词"
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setLimit(20);
+          }}
+        />
+      </label>
       {!loaded ? <small>正在加载可关联内容…</small> : null}
       {loaded && !items.length && !error ? (
         <small>暂无可关联内容，请先新建文章或产品。</small>
       ) : null}
       {error ? <p role="alert">{error}</p> : null}
-      {items
-        .filter(
-          (x) => x.id !== excludeId && (!x.deletedAt || ids.includes(keyOf(x))),
-        )
-        .map((x) => (
+      <div className="editor-reference-options">
+        {matches.slice(0, limit).map((x) => (
           <label key={x.id}>
             <input
               type="checkbox"
               checked={ids.includes(keyOf(x))}
+              disabled={ids.length >= 12 && !ids.includes(keyOf(x))}
               onChange={(e) =>
                 onChange(
                   (e.target.checked
@@ -89,6 +127,19 @@ export function ReferencePicker({
             </span>
           </label>
         ))}
+      </div>
+      {loaded && !matches.length && !error ? (
+        <small>没有匹配的内容，换个标题关键词试试。</small>
+      ) : null}
+      {matches.length > limit ? (
+        <button
+          className="cms-admin-button"
+          type="button"
+          onClick={() => setLimit((current) => current + 20)}
+        >
+          再显示 20 项（共 {matches.length} 项）
+        </button>
+      ) : null}
       {unknown.map((id) => (
         <label key={id}>
           <input

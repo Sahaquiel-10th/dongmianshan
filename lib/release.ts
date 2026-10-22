@@ -1,1 +1,1 @@
-export const RELEASE_ID = "cms-editable-20261021-4";
+export const RELEASE_ID = "onsite-editor-20261022-1";

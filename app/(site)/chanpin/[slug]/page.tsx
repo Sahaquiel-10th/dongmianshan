@@ -1,8 +1,12 @@
 import { getSiteCopy } from "@/lib/site-copy";
 import Link from "next/link";
+import { EditMarker } from "@/components/site/editor-tools";
 import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
-import { getPublishedProductBySlug, getMergedProductRedirect } from "@/lib/products";
+import {
+  getPublishedProductBySlug,
+  getMergedProductRedirect,
+} from "@/lib/products";
 import { getProductKnowledge } from "@/lib/knowledge";
 import {
   Breadcrumbs,
@@ -86,6 +90,12 @@ export default async function ProductPage({ params }: Props) {
                 {copy["product.usageLink"]}
               </a>
             </div>
+      <EditMarker
+        href={
+          product.id ? `/admin/products/${product.id}/edit` : "/admin/products"
+        }
+        label={product.name}
+      />
           </div>
           {product.image ? (
             <img
@@ -110,6 +120,7 @@ export default async function ProductPage({ params }: Props) {
               <div>
                 <h2>{title}</h2>
                 <p className="preserve-lines">{text || copy["empty.detail"]}</p>
+                <EditMarker href={product.id ? `/admin/products/${product.id}/edit#product-${id}` : "/admin/products"} label={title} />
                 {id === "ingredients" && ingredients.length ? (
                   <KnowledgeCards articles={ingredients} />
                 ) : null}

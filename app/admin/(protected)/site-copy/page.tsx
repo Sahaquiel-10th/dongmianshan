@@ -6,12 +6,12 @@ export default async function Page() {
     <section className="cms-admin-panel">
       <div className="cms-admin-panel-header">
         <div>
-          <p className="cms-admin-eyebrow">Website Copy</p>
-          <h2>全站文案、导航与页脚</h2>
-          <p>修改官网共用文字、栏目名称、搜索提示和品牌标识。</p>
+          <p className="editor-kicker">每个页面共用的位置</p>
+          <h2>导航、页脚与共用文字</h2>
+          <p>这里改一次，所有使用这些文字的位置同步更新。</p>
         </div>
-        <Link className="cms-admin-button" href="/admin/sections">
-          返回官网板块
+        <Link className="cms-admin-button" href="/admin">
+          返回官网页面
         </Link>
       </div>
       <SiteCopyForm initialValues={await getSiteCopy()} />

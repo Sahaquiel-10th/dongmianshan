@@ -1,6 +1,7 @@
 import { getSectionMetadata } from "@/lib/site-sections";
 import { getSiteCopy } from "@/lib/site-copy";
 import Link from "next/link";
+import { EditMarker } from "@/components/site/editor-tools";
 import { getPublishedProducts } from "@/lib/products";
 import { getPublishedSiteSection } from "@/lib/site-sections";
 import {
@@ -42,6 +43,15 @@ export default async function PurchasePage() {
                   <p className="site-eyebrow">{p.routineStep}</p>
                   <h2>{p.name}</h2>
                   <p>{p.summary}</p>
+                <EditMarker
+                  href={
+                    p.id
+                      ? `/admin/products/${p.id}/edit?from=purchase`
+                      : "/admin/products"
+                  }
+                  label={`${p.name} · 购买链接`}
+                />
+
                   {p.isExample ? <ExampleNote /> : null}
                 </div>
                 <div className="hero-actions">

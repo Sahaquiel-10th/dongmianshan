@@ -25,7 +25,7 @@ export const SITE_SECTION_CONFIGS = [
   {
     key: "homepage-hero",
     label: "首页 · 海报",
-    location: "/",
+    location: "/#homepage-hero",
     hint: "首页海报；标题、说明、主图和按钮逐项对应官网。多张海报用条目维护。",
     itemLabel: "海报",
   },
@@ -394,11 +394,13 @@ export async function getPublishedSiteSection(
   if (!section) return getFallbackSection(key);
   if (section.status !== "published") {
     const { getSiteCopy } = await import("./site-copy");
+    const { getSectionPage, editorPageName } = await import("./editor-map");
     const copy = await getSiteCopy();
+    const page = getSectionPage(key);
     return {
       key,
       title: copy["empty.page"],
-      eyebrow: getSectionConfig(key)?.label,
+      eyebrow: page ? editorPageName(page, copy) : copy["brand.name"],
       status: "draft",
       items: [],
     };

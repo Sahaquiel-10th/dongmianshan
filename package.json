@@ -19,7 +19,8 @@
     "prestart": "node scripts/prepare-production.mjs",
     "test:editability": "node --env-file=.env.local --import tsx scripts/editability-check.ts",
     "test:markdown": "tsx scripts/markdown-check.ts",
-    "test:product-seed": "node --env-file=.env.local --import tsx scripts/product-seed-check.ts"
+    "test:product-seed": "node --env-file=.env.local --import tsx scripts/product-seed-check.ts",
+    "test:editor": "node --env-file=.env.local --import tsx scripts/editor-workflow-check.ts"
   },
   "dependencies": {
     "@next/env": "16.3.8",

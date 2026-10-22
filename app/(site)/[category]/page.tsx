@@ -11,6 +11,7 @@ import {
   SectionLink,
 } from "@/components/site/content";
 import { ArticleCard } from "@/components/content/article-card";
+import { CreateArticleCard } from "@/components/site/editor-tools";
 import { getPublishedArticlesByCategory } from "@/lib/articles";
 import {
   getLegacyArticleCategoryRedirect,
@@ -18,6 +19,7 @@ import {
 } from "@/lib/categories";
 import { getSiteCopy } from "@/lib/site-copy";
 import { categoryCopy } from "@/lib/site-copy-config";
+import { getEditorPage, editorPageName } from "@/lib/editor-map";
 export const dynamic = "force-dynamic";
 type Props = { params: Promise<{ category: string }> };
 const sectionKey = (category: string) =>
@@ -49,12 +51,15 @@ export default async function CategoryPage({ params }: Props) {
     getPublishedSiteSection(sectionKey(category)),
     getSiteCopy(),
   ]);
+  const parent =
+    getEditorPage(getEditorPage(category)?.group ?? "care") ??
+    getEditorPage("care")!;
   return (
     <main className="brand-subpage">
       <div className="site-container">
         <Breadcrumbs
           items={[
-            { label: copy["nav.care"], href: "/hufuzhishi" },
+            { label: editorPageName(parent, copy), href: parent.path },
             { label: categoryCopy(copy, category) },
           ]}
         />
@@ -80,15 +85,13 @@ export default async function CategoryPage({ params }: Props) {
           <div className="education-grid">
             <SectionItems section={intro} />
           </div>
-          {articles.length ? (
+          {!articles.length ? <p>{copy["empty.category"]}</p> : null}
             <div className="cms-content-grid">
               {articles.map((article) => (
                 <ArticleCard key={article.id} article={article} />
               ))}
+              <CreateArticleCard category={category} label={categoryCopy(copy, category)} />
             </div>
-          ) : (
-            <p>{copy["empty.category"]}</p>
-          )}
         </div>
       </section>
     </main>

@@ -4,11 +4,18 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductForm } from "@/components/admin/product-form";
 import { prisma } from "@/lib/prisma";
+import { EditorContext } from "@/components/admin/editor-context";
+import {
+  getEditorPage,
+  editorPageHref,
+  editorPublicReturnPath,
+} from "@/lib/editor-map";
 
 type EditProductPageProps = {
   params: Promise<{
     id: string;
   }>;
+  searchParams: Promise<{ from?: string; returnTo?: string }>;
 };
 
 function jsonListToText(value: unknown) {
@@ -19,7 +26,11 @@ function jsonListToText(value: unknown) {
 
 export default async function EditProductPage({
   params,
+  searchParams,
 }: EditProductPageProps) {
+  const query = await searchParams;
+  const origin =
+    getEditorPage(query.from ?? "products") ?? getEditorPage("products")!;
   const { id } = await params;
   const product = await prisma.product.findUnique({
     where: {
@@ -51,20 +62,30 @@ export default async function EditProductPage({
   if (!product) {
     notFound();
   }
+  const returnTo = query.returnTo ? editorPublicReturnPath(query.returnTo, `/chanpin/${product.slug}`) : undefined;
 
   return (
     <section className="cms-admin-panel">
       <div className="cms-admin-panel-header cms-admin-panel-header-row">
         <div>
-          <p className="cms-admin-eyebrow">Products</p>
-          <h2>编辑产品</h2>
-          <p>修改后前台会读取最新发布内容。</p>
+          <p className="editor-kicker">产品卡片与详情页</p>
+          <h2>{product.name}</h2>
+          <p>这份资料同时用于产品卡片、产品详情与购买入口。</p>
         </div>
-        <Link className="cms-admin-button" href="/admin/products">
-          返回上一级页面
+        <Link className="cms-admin-button" href={returnTo ?? editorPageHref(origin.id)}>
+          {returnTo ? "返回官网原位置" : "返回页面内容"}
         </Link>
       </div>
 
+      <EditorContext
+        pageId={origin.id}
+        title={product.name}
+        publicPath={editorPublicReturnPath(
+          query.returnTo,
+          query.from ? origin.path : `/chanpin/${product.slug}`,
+        )}
+        shared="首页产品卡片（已发布且排序在前三项时）、产品列表、产品详情、官方购买，以及引用此产品的知识文章。"
+      />
       <IncomingLinks
         productSlug={product.slug}
         ownArticleIds={stringList(product.relatedArticleIds)}
