@@ -1,3 +1,4 @@
+import { contentValidationMessage } from "@/lib/content-validation";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { CmsAuthError, requireAdminApiUser } from "@/lib/auth";
@@ -23,7 +24,7 @@ function handleError(error: unknown) {
 
   if (error instanceof ZodError) {
     return NextResponse.json(
-      { error: error.issues[0]?.message ?? "提交的数据不合法。" },
+      { error: contentValidationMessage(error) },
       { status: 400 },
     );
   }

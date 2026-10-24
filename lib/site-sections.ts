@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { placeholderImages } from "./homepage";
 import { stringList } from "./content-fields";
-import { contentLink } from "./content-fields";
+import { contentLink, contentImage } from "./content-fields";
+import { normalizeContentUrl } from "./content-url";
 import { ARTICLE_CATEGORIES, type ArticleCategorySlug } from "./categories";
 import { prisma } from "./prisma";
 
@@ -123,17 +124,37 @@ export type SiteSectionContent = {
   items: SiteSectionItem[];
 };
 const optionalText = z.string().trim().optional().nullable();
+type Addresses = { mediaUrl?: string | null; ctaUrl?: string | null };
+function validateAddresses(value: Addresses, ctx: z.RefinementCtx) {
+  for (const field of ["mediaUrl", "ctaUrl"] as const) {
+    const schema = field === "mediaUrl" ? contentImage : contentLink;
+    if (value[field] == null) continue;
+    const parsed = schema.safeParse(value[field]);
+    if (!parsed.success) for (const issue of parsed.error.issues)
+      ctx.addIssue({ code: "custom", path: [field], message: issue.message });
+  }
+}
+function normalizeAddresses<T extends Addresses>(value: T): T {
+  return {
+    ...value,
+    mediaUrl: typeof value.mediaUrl === "string" ? normalizeContentUrl(value.mediaUrl) : value.mediaUrl,
+    ctaUrl: typeof value.ctaUrl === "string" ? normalizeContentUrl(value.ctaUrl) : value.ctaUrl,
+  };
+}
 const itemSchema = z.object({
   id: optionalText,
   title: z.string().trim().min(1, "条目标题不能为空").max(80),
   subtitle: optionalText,
   body: z.string().trim().max(1500).optional().nullable(),
-  mediaUrl: contentLink.optional().nullable(),
+  mediaUrl: optionalText,
   ctaLabel: optionalText,
-  ctaUrl: contentLink.optional().nullable(),
+  ctaUrl: optionalText,
   tagsText: optionalText,
   deletedAt: optionalText,
-});
+}).superRefine((item, ctx) => {
+  if (item.deletedAt) return;
+  validateAddresses(item, ctx);
+}).transform(normalizeAddresses);
 export const siteSectionInputSchema = z.object({
   tagsText: optionalText,
   key: z.enum(SITE_SECTION_KEYS),
@@ -141,13 +162,17 @@ export const siteSectionInputSchema = z.object({
   eyebrow: optionalText,
   subtitle: z.string().trim().max(500).optional().nullable(),
   body: z.string().trim().max(3000).optional().nullable(),
-  mediaUrl: contentLink.optional().nullable(),
+  mediaUrl: optionalText,
   ctaLabel: optionalText,
-  ctaUrl: contentLink.optional().nullable(),
+  ctaUrl: optionalText,
   status: z.enum(["draft", "published"]),
   sortOrder: z.coerce.number().int().min(0).max(9999).default(0),
   items: z.array(itemSchema).max(12),
-});
+}).superRefine((section, ctx) => {
+  // In carousel mode the old single-banner URLs aren't shown or used.
+  if (section.key === "homepage-hero" && section.items.some((item) => !item.deletedAt)) return;
+  validateAddresses(section, ctx);
+}).transform(normalizeAddresses);
 export type SiteSectionInput = z.infer<typeof siteSectionInputSchema>;
 const clean = (x: string | null | undefined) => x?.trim() || null;
 export function normalizeSiteSectionInput(input: unknown) {

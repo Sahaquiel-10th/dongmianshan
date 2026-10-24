@@ -1,8 +1,9 @@
+import { contentValidationMessage } from "@/lib/content-validation";
 import { NextResponse } from "next/server";
 import { z, ZodError } from "zod";
 import { CmsAuthError, requireAdminApiUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { contentLink } from "@/lib/content-fields";
+import { contentImage } from "@/lib/content-fields";
 import { SITE_COPY_KEYS, DEFAULT_SITE_COPY } from "@/lib/site-copy-config";
 const schema = z.object({
   values: z.record(
@@ -19,7 +20,9 @@ export async function PUT(request: Request) {
   try {
     await requireAdminApiUser();
     const { values } = schema.parse(await request.json());
-    contentLink.parse(values["brand.logo"]);
+    const logo = contentImage.safeParse(values["brand.logo"]);
+    if (!logo.success) return NextResponse.json({ error: `品牌 Logo 图片网址：${logo.error.issues[0].message}` }, { status: 400 });
+    values["brand.logo"] = logo.data;
     for (const key of [
       "brand.name",
       "nav.brand",
@@ -61,7 +64,7 @@ export async function PUT(request: Request) {
           error instanceof CmsAuthError
             ? error.message
             : error instanceof ZodError
-              ? error.issues[0]?.message
+              ? contentValidationMessage(error)
               : "保存失败，请检查数据库连接。",
       },
       {

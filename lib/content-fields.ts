@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { normalizeContentUrl, contentUrlError, type ContentUrlKind } from "./content-url";
 
 export const referenceList = z.preprocess(
   (value) =>
@@ -20,15 +21,12 @@ export function stringList(value: unknown): string[] {
     ? value.filter((x): x is string => typeof x === "string")
     : [];
 }
-export const contentLink = z
-  .string()
-  .trim()
-  .refine((value) => {
-    if (!value) return true;
-    if (/^\/(?!\/)/.test(value) && !value.includes("\\")) return true;
-    try {
-      return ["https:", "http:"].includes(new URL(value).protocol);
-    } catch {
-      return false;
-    }
-  }, "请填写站内路径或完整的 http/https 链接");
+function addressSchema(kind: ContentUrlKind) {
+  return z.string().transform(normalizeContentUrl).superRefine((value, ctx) => {
+    const error = contentUrlError(value, kind);
+    if (error) ctx.addIssue({ code: "custom", message: error });
+  });
+}
+export const contentLink = addressSchema("link");
+export const contentImage = addressSchema("image");
+export const optionalContentImage = contentImage.transform((value) => value || null).nullable().optional();

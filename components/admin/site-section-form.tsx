@@ -1,5 +1,6 @@
 "use client";
 import { ImageField } from "./image-field";
+import { UrlInput } from "./url-input";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -268,9 +269,10 @@ export function SiteSectionForm({ section, itemLabel }: SiteSectionFormProps) {
             </label>
             <label className="cms-admin-field">
               <span>这个按钮打开的网址</span>
-              <input
+              <UrlInput
+                aria-label="这个按钮打开的网址"
                 value={values.ctaUrl}
-                onChange={(event) => updateField("ctaUrl", event.target.value)}
+                onValueChange={(value) => updateField("ctaUrl", value)}
               />
             </label>
           </>
@@ -304,7 +306,7 @@ export function SiteSectionForm({ section, itemLabel }: SiteSectionFormProps) {
                 : `${isHero ? "第" : "卡片 "}${items.slice(0, index).filter((x) => !x.deletedAt).length + 1}${isHero ? " 张海报" : ""}`}
               {item.title ? ` · ${item.title}` : " · 尚未填写标题"}
             </legend>
-            <div className="cms-admin-form-grid">
+            <fieldset className="cms-admin-form-grid cms-admin-item-fields" disabled={!!item.deletedAt} aria-label="条目内容">
               <label className="cms-admin-field">
                 <span>{isHero ? "海报大标题" : "卡片标题"}</span>
                 <input
@@ -351,11 +353,10 @@ export function SiteSectionForm({ section, itemLabel }: SiteSectionFormProps) {
               </label>
               <label className="cms-admin-field">
                 <span>这个按钮打开的网址</span>
-                <input
+                <UrlInput
+                  aria-label="这个按钮打开的网址"
                   value={item.ctaUrl}
-                  onChange={(event) =>
-                    updateItem(index, "ctaUrl", event.target.value)
-                  }
+                  onValueChange={(value) => updateItem(index, "ctaUrl", value)}
                 />
               </label>
               <label className="cms-admin-field cms-admin-field-full">
@@ -368,7 +369,7 @@ export function SiteSectionForm({ section, itemLabel }: SiteSectionFormProps) {
                   rows={3}
                 />
               </label>
-            </div>
+            </fieldset>
             <div className="cms-admin-form-actions">
               <button
                 className="cms-admin-button"

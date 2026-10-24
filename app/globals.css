@@ -16,6 +16,11 @@
   --content-width: 1200px;
 }
 
+.cms-url-hint { color: var(--text-muted); font-size: 12px; line-height: 1.7; font-weight: 400; overflow-wrap: anywhere; }
+.cms-url-error { color: #b91c1c; font-size: 13px; line-height: 1.7; font-weight: 500; }
+.cms-admin-item-fields { min-width: 0; border: 0; padding: 0; margin: 0; }
+.cms-admin-item-fields:disabled { opacity: .65; }
+
 * {
   box-sizing: border-box;
 }

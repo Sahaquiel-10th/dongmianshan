@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import type { Prisma } from "@prisma/client";
 import { notFound } from "next/navigation";
 import { z } from "zod";
-import { referenceList } from "./content-fields";
+import { referenceList, optionalContentImage } from "./content-fields";
 import { MOCK_PUBLISHED_ARTICLES } from "./mock-content";
 import { prisma } from "./prisma";
 import {
@@ -65,7 +65,7 @@ export const articleInputSchema = z.object({
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug 只能包含小写字母、数字和短横线"),
   summary: optionalTrimmedString,
   content: z.string().trim().min(1, "正文不能为空"),
-  coverImage: optionalTrimmedString,
+  coverImage: optionalContentImage,
   category: z.enum(ARTICLE_CATEGORY_SLUGS, {
     error: "分类不合法",
   }),

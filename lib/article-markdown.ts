@@ -1,5 +1,6 @@
 import { marked } from "marked";
 import sanitizeHtml from "sanitize-html";
+import { normalizeContentUrl } from "./content-url";
 marked.setOptions({
   gfm: true,
   breaks: true,
@@ -47,9 +48,14 @@ export function renderArticleMarkdown(content: string) {
     },
     allowedSchemes: ["http", "https", "mailto"],
     transformTags: {
-      a: sanitizeHtml.simpleTransform("a", {
-        rel: "nofollow noreferrer noopener",
-        target: "_blank",
+      a: (_tagName, attributes) => ({
+        tagName: "a",
+        attribs: {
+          ...attributes,
+          ...(attributes.href ? { href: normalizeContentUrl(attributes.href) } : {}),
+          rel: "nofollow noreferrer noopener",
+          target: "_blank",
+        },
       }),
     },
   });

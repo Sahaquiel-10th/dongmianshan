@@ -1,3 +1,4 @@
+import { contentValidationMessage } from "@/lib/content-validation";
 import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
@@ -19,7 +20,7 @@ function handleError(error: unknown) {
   }
 
   if (error instanceof ZodError) {
-    return NextResponse.json({ error: error.issues[0]?.message ?? "提交的数据不合法。" }, { status: 400 });
+    return NextResponse.json({ error: contentValidationMessage(error) }, { status: 400 });
   }
 
   if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {

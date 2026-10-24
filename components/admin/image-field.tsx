@@ -1,5 +1,7 @@
 "use client";
 import { useId, useState } from "react";
+import { UrlInput } from "./url-input";
+import { contentUrlError, normalizeContentUrl } from "@/lib/content-url";
 export function ImageField({
   label,
   value,
@@ -15,10 +17,12 @@ export function ImageField({
   return (
     <div className="cms-admin-field cms-admin-field-full image-field">
       <label htmlFor={id}>{label}</label>
-      <input
+      <UrlInput
         id={id}
+        kind="image"
+        aria-label={label}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onValueChange={onChange}
         placeholder="上传图片，或粘贴图片链接"
       />
       <div className="cms-admin-form-actions">
@@ -81,8 +85,8 @@ export function ImageField({
           {error}
         </p>
       ) : null}
-      {value ? (
-        <img className="image-field-preview" src={value} alt={`${label}预览`} />
+      {value && !contentUrlError(value, "image") ? (
+        <img className="image-field-preview" src={normalizeContentUrl(value)} alt={`${label}预览`} />
       ) : null}
     </div>
   );

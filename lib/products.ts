@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { products as fallbackProducts } from "./homepage";
-import { referenceList, contentLink } from "./content-fields";
+import { referenceList, contentLink, optionalContentImage } from "./content-fields";
 import { prisma } from "./prisma";
 
 export const PRODUCT_STATUS_VALUES = ["draft", "published"] as const;
@@ -53,7 +53,7 @@ export const productInputSchema = z.object({
     .nullable()
     .optional(),
   routineStep: optionalTrimmedString,
-  coverImage: optionalTrimmedString,
+  coverImage: optionalContentImage,
   shopUrl: contentLink.nullable().optional(),
   usage: optionalTrimmedString,
   features: optionalTrimmedString,

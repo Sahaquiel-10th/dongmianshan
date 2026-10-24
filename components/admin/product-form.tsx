@@ -1,5 +1,6 @@
 "use client";
 import { ImageField } from "./image-field";
+import { UrlInput } from "./url-input";
 
 import { ReferencePicker } from "./reference-picker";
 import { useRouter } from "next/navigation";
@@ -186,9 +187,10 @@ export function ProductForm({
         </label>
         <label className="cms-admin-field">
           <span>购买链接</span>
-          <input
+          <UrlInput
+            aria-label="购买链接"
             value={values.shopUrl}
-            onChange={(event) => updateField("shopUrl", event.target.value)}
+            onValueChange={(value) => updateField("shopUrl", value)}
           />
         </label>
         <label className="cms-admin-field cms-admin-field-full">

@@ -1,3 +1,4 @@
+import { contentValidationMessage } from "@/lib/content-validation";
 import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
@@ -26,7 +27,7 @@ function handleArticleError(error: unknown) {
   if (error instanceof ZodError) {
     return NextResponse.json(
       {
-        error: error.issues[0]?.message ?? "提交的数据不合法。",
+        error: contentValidationMessage(error),
       },
       { status: 400 },
     );

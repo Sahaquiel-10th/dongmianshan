@@ -29,3 +29,8 @@ assert.match(article, /rel="nofollow noreferrer noopener"/);
 assert.match(article, /<code class="language-js">/);
 assert.match(article, /const amount = 1;/);
 console.log("PASS article filtering blocks unsafe HTML and preserves normal Markdown");
+const simpleLinks = renderArticleMarkdown("[购买](e.tb.cn/h.test?tk=a%2Bb)\n\n[站内](/chanpin)\n\n[跳转](#products)");
+assert.match(simpleLinks, /href="https:\/\/e\.tb\.cn\/h\.test\?tk=a%2Bb"/);
+assert.match(simpleLinks, /href="\/chanpin"/);
+assert.match(simpleLinks, /href="#products"/);
+console.log("PASS Markdown links accept bare domains and keep internal paths and fragments");
